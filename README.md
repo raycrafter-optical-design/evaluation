@@ -28,3 +28,6 @@ python3 -m http.server                                         # preview at http
 
 The generated HTML is committed, so Pages needs no build step. See `CLAUDE.md` for conventions and
 `optiland_issues_found.md` for the Optiland problems found so far.
+
+## Visit the site
+The [evaluation site lives here](https://raycrafter-optical-design.github.io/evaluation/)
