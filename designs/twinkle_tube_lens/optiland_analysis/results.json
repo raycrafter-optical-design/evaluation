@@ -1,0 +1,276 @@
+{
+ "figs": {
+  "layout_rays": "figs/layout_rays.png",
+  "rms_spot": "figs/rms_spot.png",
+  "chief_ray_position": "figs/chief_ray_position.png",
+  "spots": "figs/spots.png",
+  "layout_3d_png": "figs/layout_3d.png"
+ },
+ "zmx": "just_tubelens.ZMX",
+ "wavelengths_um": [
+  0.92
+ ],
+ "primary_um": 0.92,
+ "fields_deg": [
+  0.0
+ ],
+ "EPD_mm": 4.39,
+ "surfaces_zemax": 11,
+ "surfaces_optiland": 11,
+ "lens_table": [
+  {
+   "zemax": 0,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": null,
+   "thickness_mm": null,
+   "glass": "",
+   "diam_mm": 0.0,
+   "diam_is_automatic": true,
+   "clear_aperture_mm": null,
+   "is_stop": false,
+   "optiland_radius_mm": null,
+   "is_mirror": false
+  },
+  {
+   "zemax": 1,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": null,
+   "thickness_mm": 20.0,
+   "glass": "",
+   "diam_mm": 2.195,
+   "diam_is_automatic": true,
+   "clear_aperture_mm": null,
+   "is_stop": false,
+   "optiland_radius_mm": null,
+   "is_mirror": false
+  },
+  {
+   "zemax": 4,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": null,
+   "thickness_mm": 0.0,
+   "glass": "MIRROR",
+   "diam_mm": 2.195,
+   "diam_is_automatic": true,
+   "clear_aperture_mm": null,
+   "is_stop": false,
+   "optiland_radius_mm": null,
+   "is_mirror": true
+  },
+  {
+   "zemax": 7,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": -1330.5,
+   "thickness_mm": -2.0,
+   "glass": "SF2",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": true,
+   "optiland_radius_mm": -1330.5,
+   "is_mirror": false
+  },
+  {
+   "zemax": 8,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": -336.0,
+   "thickness_mm": -4.5,
+   "glass": "N-BK7",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": false,
+   "optiland_radius_mm": -336.0,
+   "is_mirror": false
+  },
+  {
+   "zemax": 9,
+   "comment": "AC508-750-A",
+   "type": "STANDARD",
+   "radius_mm": 417.8,
+   "thickness_mm": -4.0,
+   "glass": "",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": false,
+   "optiland_radius_mm": 417.8,
+   "is_mirror": false
+  },
+  {
+   "zemax": 10,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": null,
+   "thickness_mm": -0.0,
+   "glass": "",
+   "diam_mm": 2.1813286354199475,
+   "diam_is_automatic": true,
+   "clear_aperture_mm": null,
+   "is_stop": false,
+   "optiland_radius_mm": null,
+   "is_mirror": false
+  },
+  {
+   "zemax": 11,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": -1330.5,
+   "thickness_mm": -2.0,
+   "glass": "SF2",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": false,
+   "optiland_radius_mm": -1330.5,
+   "is_mirror": false
+  },
+  {
+   "zemax": 12,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": -336.0,
+   "thickness_mm": -4.5,
+   "glass": "N-BK7",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": false,
+   "optiland_radius_mm": -336.0,
+   "is_mirror": false
+  },
+  {
+   "zemax": 13,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": 417.8,
+   "thickness_mm": -373.9934530385023,
+   "glass": "",
+   "diam_mm": 25.4,
+   "diam_is_automatic": false,
+   "clear_aperture_mm": 25.4,
+   "is_stop": false,
+   "optiland_radius_mm": 417.8,
+   "is_mirror": false
+  },
+  {
+   "zemax": 14,
+   "comment": "",
+   "type": "STANDARD",
+   "radius_mm": 113.23595893150477,
+   "thickness_mm": 0.0,
+   "glass": "",
+   "diam_mm": 4.29234440132877e-05,
+   "diam_is_automatic": true,
+   "clear_aperture_mm": null,
+   "is_stop": false,
+   "optiland_radius_mm": 113.23595893150477,
+   "is_mirror": false
+  }
+ ],
+ "wavefront": {
+  "works": true,
+  "on_axis_strehl": 0.998172728714191
+ },
+ "EFL_mm": -378.8245356081577,
+ "semi_diameter_check": [
+  {
+   "excluded_reason": null,
+   "zemax_surface": 1,
+   "optiland_surface": 1,
+   "comment": "",
+   "zemax_mm": 2.195,
+   "optiland_mm": 2.1950000000000003
+  },
+  {
+   "excluded_reason": "The stored Zemax value (2.195 mm) is exactly the bare beam radius (2.195 mm), what a mirror at normal incidence would give, not the 1.414 x larger footprint on a 45 degree mirror. Every later surface agrees with Optiland to four digits, and the excitation file's value for the same mirror and beam (3.1042 mm) equals Optiland's 45 degree footprint. We think this stored value was not refreshed after the break was inserted; the cause is not established.",
+   "zemax_surface": 4,
+   "optiland_surface": 2,
+   "comment": "",
+   "zemax_mm": 2.195,
+   "optiland_mm": 3.104198769408943
+  },
+  {
+   "excluded_reason": null,
+   "zemax_surface": 10,
+   "optiland_surface": 6,
+   "comment": "",
+   "zemax_mm": 2.1813286354199475,
+   "optiland_mm": 2.181328635419962
+  }
+ ],
+ "transmission_vs_field": {
+  "field_deg": [
+   0.0
+  ],
+  "fraction": [
+   1.0
+  ]
+ },
+ "spot_reference": {
+  "kind": "airy",
+  "label": "Airy radius",
+  "radius_um": 96.85258985171622,
+  "image_NA": 0.005794372673556913
+ },
+ "configurations": {
+  "as_in_file": [
+   0.0,
+   -2.0,
+   -1.0,
+   0.0,
+   1.0,
+   2.0
+  ],
+  "unique": [
+   -2.0,
+   -1.0,
+   0.0,
+   1.0,
+   2.0
+  ]
+ },
+ "scan": {
+  "angle_deg": [
+   -2.0,
+   -1.0,
+   0.0,
+   1.0,
+   2.0
+  ],
+  "chief_x_mm": [
+   -0.46046657877420205,
+   -0.1153246635206315,
+   1.4210854715202004e-14,
+   -0.1153246635206315,
+   -0.46046657877420205
+  ],
+  "chief_y_mm": [
+   -18.647873176903282,
+   -9.343632000092914,
+   0.0,
+   9.343632000092914,
+   18.647873176903282
+  ],
+  "rms_um": [
+   5.761129221873895,
+   1.4394566681323422,
+   0.022874364759261877,
+   1.4394566681322976,
+   5.7611292218739
+  ],
+  "rays": [
+   1801,
+   1801,
+   1801,
+   1801,
+   1801
+  ]
+ },
+ "glb": "model.glb"
+}

@@ -1,0 +1,19 @@
+{
+ "name": "twinkle_tube_lens",
+ "title": "TWINKLE tube lens (alone)",
+ "summary": "The tube-lens doublet pair on its own, as a component check of the excitation path. 6 configurations in the file.",
+ "zmx": "just_tubelens.ZMX",
+ "wavelengths_um": [
+  0.92
+ ],
+ "raycrafter": "not yet tried",
+ "zemax_version": "OpticStudio 22.2.1",
+ "optiland_version": "0.6.3",
+ "source": "https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax",
+ "semi_diameter_excluded": {
+  "4": "The stored Zemax value (2.195 mm) is exactly the bare beam radius (2.195 mm), what a mirror at normal incidence would give, not the 1.414 x larger footprint on a 45 degree mirror. Every later surface agrees with Optiland to four digits, and the excitation file's value for the same mirror and beam (3.1042 mm) equals Optiland's 45 degree footprint. We think this stored value was not refreshed after the break was inserted; the cause is not established."
+ },
+ "analysis": "generic",
+ "lede": "The tube-lens pair of the TWINKLE excitation path on its own, with a collimated 4.39 mm beam and 6 small galvo configurations. This is the one TWINKLE file where Optiland's wavefront and PSF tools run, because the galvo is at 0° in configuration 1.",
+ "viewer": true
+}

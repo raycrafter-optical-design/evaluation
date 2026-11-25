@@ -16,12 +16,19 @@ designs/<name>/
 evaluation_tools/          analysis and page-building code
 ```
 
+Designs: `SMOD4.5` (bespoke analysis against Zemax plots) and the four TWINKLE two-photon microscope
+files (`twinkle_excitation`, `twinkle_scan_lens`, `twinkle_tube_lens`, `twinkle_collection`, from
+[BrainCOGS/Microscope](https://github.com/BrainCOGS/Microscope/tree/main/zemax)), which use the
+generic analysis. Their Zemax reference is the semi-diameters stored in the `.ZMX` plus the plots the
+authors supplied. `design.json` has `"analysis": "generic"` for these.
+
 ## Run
 
 ```
 export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac   # venv outside Dropbox
 uv sync --extra dev
-uv run python -m evaluation_tools.analyze designs/SMOD4.5      # about 2 minutes
+uv run python -m evaluation_tools.analyze designs/SMOD4.5      # about 2 minutes (bespoke analysis)
+uv run python -m evaluation_tools.analyze_zmx designs/twinkle_collection   # generic analysis, 1 to 3 minutes
 uv run python -m evaluation_tools.build_summary                # all pages
 python3 -m http.server                                         # preview at http://localhost:8000
 ```

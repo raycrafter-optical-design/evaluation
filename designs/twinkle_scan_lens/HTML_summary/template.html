@@ -1,0 +1,92 @@
+<section id="verdict">
+  <h2>Zemax check: verdict by quantity</h2>
+  <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%.</p>
+  <div class="tally">@@TALLY@@</div>
+  <div class="scroll"><table>
+  <thead><tr><th>Quantity</th><th class="num">Zemax</th><th class="num">Optiland</th><th class="num">Difference</th><th>Result</th></tr></thead>
+  <tbody>
+@@VERDICT_ROWS@@
+  </tbody></table></div>
+  @@EXCLUDED@@
+</section>
+
+<section id="summary">
+  <h2>Optiland detail: what works</h2>
+  <div class="scroll">
+  <table class="status-table">
+    <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Load the file</td><td><span class="chip ok">Works</span></td><td>Loads. Same tilt and pickup caveats as the excitation path.</td></tr>
+      <tr><td>Galvo angle (18 configurations)</td><td><span class="chip warn">Works, patched</span></td><td>Written into the file text and reloaded for each angle.</td></tr>
+      <tr><td>Real-ray trace, all 17 distinct galvo angles</td><td><span class="chip ok">Works</span></td><td>1801 of 1801 rays reach the image at every angle.</td></tr>
+      <tr><td>Semi-diameter on automatic surfaces</td><td><span class="chip ok">Works</span></td><td>The scan-lens image plane matches exactly. The galvo mirror is not scored (see above).</td></tr>
+      <tr><td>RMS spot vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Geometric.</td></tr>
+      <tr><td>RMS wavefront, Strehl, PSF</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilts (issue 8).</td></tr>
+      <tr><td>3D viewer of the model</td><td><span class="chip warn">Partial</span></td><td>See the layout section.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Ray paths in the plane of the system: galvo at the left, down through the relay lenses and scan lens to the image plane.</figcaption></figure>
+
+  <details style="border-color:var(--rule)">
+    <summary style="color:var(--ink)">Show Optiland's own 3D viewer (incomplete for this system)</summary>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/layout_3d.png" alt="Optiland 3D viewer render showing only the first leg of the ray path"></div>
+      <figcaption>Optiland's VTK viewer. The rays stop at the galvo mirror and some elements are misplaced (issue 8 in <code>optiland_issues_found.md</code>). The projected layout above, drawn from the same ray coordinates, shows the whole path.</figcaption></figure>
+  </details>
+
+</section>
+
+<section id="spots">
+  <div class="title-row"><h2>Spots and scan linearity</h2><span class="chip ok">Works</span></div>
+  <p>The beam is focused by the scan lens (image NA 0.014, Airy radius 41 µm). Geometric RMS radius is 5.3 to 15.3 µm over ±8° of galvo angle; the chief ray moves 2412 µm per degree. There is no Zemax number to set against these, only the file's own semi-diameter.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against galvo angle"></div><figcaption>Geometric RMS spot radius. It is largest on axis and has minima near ±7°.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/chief_ray_position.png" alt="Chief-ray position against galvo angle"></div><figcaption>Chief-ray position against galvo angle.</figcaption></figure>
+  </div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams"></div><figcaption>Spot diagrams at five galvo angles, centred, one scale.</figcaption></figure>
+</section>
+
+<section id="issues">
+  <h2>Optiland issues found</h2>
+  <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
+  <ul class="issue-list">
+    <li><b>5. Surface tilts (SCBD) ignored.</b> The tilted dichroic loads untilted, with no warning. <span class="chip warn">Patched locally</span></li>
+    <li><b>6. Parameter pickups (PPAR) ignored.</b> Only matters when a value is edited. <span class="chip warn">Patched locally</span></li>
+    <li><b>7. Multi-configuration data dropped.</b> Only configuration 1 loads; the galvo angles are configurations. <span class="chip warn">Worked around</span></li>
+    <li><b>8. Paraxial engine refuses tilted systems.</b> Blocks wavefront, PSF and Strehl on the tilted galvo systems. <span class="chip bad">Open</span></li>
+    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
+  </ul>
+</section>
+
+<section id="semi-diameters">
+  <h2>Semi-diameters, every automatic surface</h2>
+  <p>The same comparison as the verdict table, with the ratio, including any row that was not scored.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax surface</th><th>Comment</th><th class="num">Zemax (mm)</th><th class="num">Optiland (mm)</th><th class="num">Ratio</th><th></th></tr></thead>
+  <tbody>
+@@SD_ROWS@@
+  </tbody></table></div>
+</section>
+
+<section id="lens-data">
+  <h2>Lens data</h2>
+  <p>Prescription as stored in the Zemax file (coordinate breaks left out; Optiland absorbs them into the neighbouring surfaces). The Optiland radius is read back from the loaded model, so a difference would show an import error. Thicknesses are signed Zemax values: negative after a mirror.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax #</th><th>Comment</th><th>Type</th><th class="num">Radius, Zemax (mm)</th><th class="num">Radius, Optiland (mm)</th><th class="num">Thickness (mm)</th><th>Glass</th><th class="num">Semi-diameter (mm)</th><th class="num">Clear aperture (mm)</th></tr></thead>
+  <tbody>
+@@LENS_ROWS@@
+  </tbody></table></div>
+</section>
+
+<section id="reproduce" style="border-bottom:0">
+  <h2>Reproduce</h2>
+<pre>export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac
+uv run python -m evaluation_tools.analyze_zmx designs/twinkle_scan_lens   # about 1 to 3 minutes
+uv run python -m evaluation_tools.build_summary                    # regenerates all HTML</pre>
+  <p><code>zemax_text.py</code> holds the workarounds for features Optiland ignores (tilted surfaces, pickups, configurations). <code>analyze_zmx.py</code> runs the analysis and <code>build_generic.py</code> writes this page. The Zemax files come from the <a href="https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax">TWINKLE repository</a>.</p>
+</section>

@@ -18,6 +18,8 @@ from optiland import backend as be
 from optiland.fileio import load_zemax_file
 from optiland.interactions.thin_lens_interaction_model import ThinLensInteractionModel
 
+from evaluation_tools.zemax_text import expand_surface_tilts, set_galvo_angle
+
 
 def _interact_real_rays_fixed(self, rays):
     """Thin-lens refraction that works for rays travelling in either z sense."""
@@ -93,14 +95,38 @@ def unfold_text(text: str) -> str:
     return head + "".join(out) + tail
 
 
-def load(zmx_source: Path, work_dir: Path, patched: bool = True, unfolded: bool = False):
-    """Load ``zmx_source`` into Optiland; intermediate .zmx files are written to ``work_dir``."""
+def load(
+    zmx_source: Path,
+    work_dir: Path,
+    patched: bool = True,
+    unfolded: bool = False,
+    galvo_angle_deg: float | None = None,
+    suffix: str = "",
+):
+    """Load ``zmx_source`` into Optiland; intermediate .zmx files are written to ``work_dir``.
+
+    Parameters
+    ----------
+    galvo_angle_deg : float, optional
+        Write this galvo tilt (degrees) into the file, with its pickups, before loading.
+        Optiland reads multi-configuration files as configuration 1 only.
+    suffix : str
+        Appended to the intermediate file names, so several configurations can coexist.
+
+    ``SCBD`` surface tilts are always expanded into coordinate breaks (see ``zemax_text``).
+    """
     if patched:
         patch_thin_lens()
     stem = zmx_source.stem
-    path = transcode(zmx_source, work_dir / f"{stem}_utf8.zmx")
+    text = zmx_source.read_text(encoding="utf-16")
+    if galvo_angle_deg is not None:
+        text = set_galvo_angle(text, galvo_angle_deg)
+    text = expand_surface_tilts(text)
+    path = work_dir / f"{stem}{suffix}_utf8.zmx"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
     if unfolded:
-        upath = path.with_name(f"{stem}_unfolded.zmx")
+        upath = path.with_name(f"{stem}{suffix}_unfolded.zmx")
         upath.write_text(unfold_text(path.read_text()))
         path = upath
     return load_zemax_file(str(path))

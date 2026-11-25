@@ -56,3 +56,19 @@ def test_rows_with_manual_status_and_tally():
     assert [r["result"] for r in rows] == ["match", "fail"]
     assert tally_counts(rows) == {"match": 1, "partial": 0, "fail": 1}
     assert "chip bad" in verdict_rows_html(rows)
+
+
+def test_small_ratio_differences_are_shown_as_percent():
+    row = {
+        "id": "x",
+        "label": "x",
+        "zemax": [10.0],
+        "optiland": ["r.json:v/0"],
+        "mode": "ratio",
+        "tol": 0.005,
+        "partial_tol": 1.05,
+        "decimals": 3,
+    }
+    rows = evaluate_rows({"rows": [row]}, {"r.json": {"v": [10.014]}})
+    assert rows[0]["difference_text"] == "0.14%"
+    assert rows[0]["result"] == "match"

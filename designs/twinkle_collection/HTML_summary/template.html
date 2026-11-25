@@ -1,0 +1,105 @@
+<section id="verdict">
+  <h2>Zemax check: verdict by quantity</h2>
+  <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%. Relative illumination is compared with the Zemax plot (see below).</p>
+  <div class="tally">@@TALLY@@</div>
+  <div class="scroll"><table>
+  <thead><tr><th>Quantity</th><th class="num">Zemax</th><th class="num">Optiland</th><th class="num">Difference</th><th>Result</th></tr></thead>
+  <tbody>
+@@VERDICT_ROWS@@
+  </tbody></table></div>
+  @@EXCLUDED@@
+</section>
+
+<section id="cmp-ri">
+  <div class="title-row"><h2>Relative illumination</h2><span class="chip ok">Roll-off matches</span><span class="chip warn">Mean offset partial</span></div>
+  <p>Zemax's relative-illumination plot for field 0° to 12° at 0.546 µm. Optiland has no relative-illumination analysis, so we count the fraction of pupil rays that pass inside every clear or floating aperture that Zemax declares (circles at each surface, in its local frame). That ignores the cos-law terms Zemax includes, which are a few per cent here. The Zemax curve ripples by about ±3% from its own sampling, so we compare where the curve falls through 50% and where it reaches zero, plus the mean difference.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../Zemax_reference_output/RelativeIllumination.png" alt="Zemax relative illumination against field"></div><figcaption>Zemax, as exported.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/relative_illumination.png" alt="Zemax relative illumination (digitised) and the Optiland pupil fraction"></div><figcaption>Zemax points (read from the SVG vertices, digitised) and the Optiland pupil fraction.</figcaption></figure>
+  </div>
+  <p>Zemax falls through 50% at 9.06° and reaches zero at 10.71°. Optiland's pupil fraction does the same at 8.96° and 10.65°, within 0.1°. The mean absolute difference over the 21 Zemax points is 0.033, about the size of Zemax's own ripple. Note the beam is already clipped at 8°: the 2.5 mm detector aperture and the 12.7 mm condenser limit the field, not the 25 mm lenses.</p>
+</section>
+
+<section id="summary">
+  <h2>Optiland detail: what works</h2>
+  <div class="scroll">
+  <table class="status-table">
+    <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Load the file (aspheric surface, mirror, 8 fields)</td><td><span class="chip ok">Works</span></td><td>Loads, all 14 surfaces.</td></tr>
+      <tr><td>Semi-diameter on automatic surfaces</td><td><span class="chip ok">Works</span></td><td>Both within 0.02%.</td></tr>
+      <tr><td>Clipping by Zemax apertures (relative illumination)</td><td><span class="chip warn">Works, by hand</span></td><td>Optiland does not apply the Zemax <code>CLAP</code>/<code>FLAP</code> apertures on import, so the pupil fraction is counted here from local ray radii.</td></tr>
+      <tr><td>RMS spot vs field</td><td><span class="chip ok">Works</span></td><td>Geometric. This is a non-imaging system, so no Airy comparison.</td></tr>
+      <tr><td>EFL</td><td><span class="chip ok">Works</span></td><td>2297 mm. Not a meaningful figure for a collector, and there is no Zemax value to compare.</td></tr>
+      <tr><td>Strehl, wavefront</td><td><span class="chip warn">Not meaningful</span></td><td>Runs, but the design does not form a sharp image (Strehl 0.003); the detector is meant to collect, not resolve.</td></tr>
+      <tr><td>3D viewer of the model</td><td><span class="chip ok">Works</span></td><td>Complete, with the interactive viewer below.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Ray paths for the extreme and central fields, projected onto the plane of the fold. Black squares are the two mirrors.</figcaption></figure>
+
+  <h3>Interactive 3D</h3>
+  <div id="viewer" aria-label="3D model of the optical system">
+    <img src="../optiland_analysis/figs/layout_3d.png" alt="Static 3D render of the optical system from optiland's VTK viewer" id="viewer-fallback">
+    <span class="hint" id="viewer-hint">Loading 3D model…</span>
+  </div>
+  <div class="viewer-bar">
+    <button type="button" id="view-iso">Isometric</button>
+    <button type="button" id="view-side">Side (YZ)</button>
+    <button type="button" id="view-top">Top (XZ)</button>
+  </div>
+  <p style="font-size:13px;color:var(--muted)">The scene from Optiland's own VTK 3D viewer, rendered offscreen and exported as glTF. Drag to rotate, scroll to zoom, right-drag to pan.</p>
+
+</section>
+
+<section id="spots">
+  <div class="title-row"><h2>Spots on the detector</h2><span class="chip ok">Works</span></div>
+  <p>Spots at the eight Zemax fields on the last surface. The dashed circle is the 2.5 mm clear aperture Zemax puts on that surface; beyond about 8° the beam no longer fits inside it, which is the relative-illumination roll-off above.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against field"></div><figcaption>Geometric RMS spot radius against the detector aperture radius.</figcaption></figure>
+    
+  </div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams"></div><figcaption>Spot diagrams at each field, centred, one scale.</figcaption></figure>
+</section>
+
+<section id="issues">
+  <h2>Optiland issues found</h2>
+  <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
+  <ul class="issue-list">
+    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
+    <li><b>11. Aperture data not applied.</b> Zemax <code>CLAP</code>/<code>FLAP</code> are not turned into surface apertures on import, so rays are never clipped. <span class="chip warn">Worked around</span></li>
+  </ul>
+</section>
+
+<section id="semi-diameters">
+  <h2>Semi-diameters, every automatic surface</h2>
+  <p>The same comparison as the verdict table, with the ratio, including any row that was not scored.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax surface</th><th>Comment</th><th class="num">Zemax (mm)</th><th class="num">Optiland (mm)</th><th class="num">Ratio</th><th></th></tr></thead>
+  <tbody>
+@@SD_ROWS@@
+  </tbody></table></div>
+</section>
+
+<section id="lens-data">
+  <h2>Lens data</h2>
+  <p>Prescription as stored in the Zemax file (coordinate breaks left out; Optiland absorbs them into the neighbouring surfaces). The Optiland radius is read back from the loaded model, so a difference would show an import error. Thicknesses are signed Zemax values: negative after a mirror.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax #</th><th>Comment</th><th>Type</th><th class="num">Radius, Zemax (mm)</th><th class="num">Radius, Optiland (mm)</th><th class="num">Thickness (mm)</th><th>Glass</th><th class="num">Semi-diameter (mm)</th><th class="num">Clear aperture (mm)</th></tr></thead>
+  <tbody>
+@@LENS_ROWS@@
+  </tbody></table></div>
+</section>
+
+<section id="reproduce" style="border-bottom:0">
+  <h2>Reproduce</h2>
+<pre>export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac
+uv run python -m evaluation_tools.analyze_zmx designs/twinkle_collection   # about 1 to 3 minutes
+uv run python -m evaluation_tools.build_summary                    # regenerates all HTML</pre>
+  <p><code>zemax_text.py</code> holds the workarounds for features Optiland ignores (tilted surfaces, pickups, configurations). <code>analyze_zmx.py</code> runs the analysis and <code>build_generic.py</code> writes this page. The Zemax files come from the <a href="https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax">TWINKLE repository</a>.</p>
+</section>

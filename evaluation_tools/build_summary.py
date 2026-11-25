@@ -84,7 +84,12 @@ def evaluate_rows(comparison: dict, documents: dict[str, dict]) -> list[dict]:
             if row["mode"] == "abs":
                 row["difference_text"] = "<0.0001" if worst < 0.0001 else f"{worst:.4f}".rstrip("0")
             else:
-                row["difference_text"] = f"{worst:.0f}×" if worst >= 10 else f"about {worst:.0f}×"
+                if worst < 1.1:
+                    row["difference_text"] = f"{(worst - 1) * 100:.2f}%"
+                else:
+                    row["difference_text"] = (
+                        f"{worst:.0f}×" if worst >= 10 else f"about {worst:.0f}×"
+                    )
         evaluated.append(row)
     return evaluated
 
@@ -182,6 +187,10 @@ def load_json(path: Path) -> dict:
 def build_design(design_dir: Path) -> dict:
     """Write ``HTML_summary/index.html`` for one design and return its landing-page entry."""
     design = load_json(design_dir / "design.json")
+    if design.get("analysis") == "generic":  # designs analysed by analyze_zmx.py
+        from evaluation_tools import build_generic
+
+        return build_generic.build_design(design_dir)
     results = load_json(design_dir / "optiland_analysis" / "results.json")
     digitised = load_json(design_dir / "Zemax_reference_output" / "zemax_digitised.json")
     comparison = load_json(design_dir / "comparison.json")

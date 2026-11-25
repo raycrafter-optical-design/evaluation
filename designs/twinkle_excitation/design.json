@@ -1,0 +1,16 @@
+{
+ "name": "twinkle_excitation",
+ "title": "TWINKLE excitation path",
+ "summary": "Two-photon microscope excitation: 4.4 mm beam, galvo, 200 mm relay, scan lens, tube lens, three fold mirrors, dichroic and an ideal objective. 22 galvo angles in the file.",
+ "zmx": "excitation_twinkle.ZMX",
+ "wavelengths_um": [
+  0.92
+ ],
+ "raycrafter": "not yet tried",
+ "zemax_version": "OpticStudio 22.2.1",
+ "optiland_version": "0.6.3",
+ "source": "https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax",
+ "analysis": "generic",
+ "lede": "The full excitation path of the TWINKLE two-photon microscope in Optiland: a 4.39 mm beam, galvo mirror, relay, scan lens, tube lens, three fold mirrors, a tilted dichroic and an ideal objective. The Zemax file stores 22 galvo angles. Optiland loads only the first until we rewrite the file, and once we do, ray tracing agrees with Zemax to 0.14% on every surface Zemax computed a semi-diameter for. The PSF-based results Zemax gives (FWHM, field curvature) cannot be computed in Optiland at all, because its paraxial engine rejects the tilted galvo.",
+ "viewer": false
+}

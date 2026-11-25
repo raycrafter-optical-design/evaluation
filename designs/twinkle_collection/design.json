@@ -1,0 +1,16 @@
+{
+ "name": "twinkle_collection",
+ "title": "TWINKLE collection optics",
+ "summary": "Fluorescence collection: 18.4 mm entrance pupil, fold mirror, achromat pair, dichroic mirror, filter, aspheric condenser and a 2.5 mm detector aperture. Fields to 12°.",
+ "zmx": "collection_optics.ZMX",
+ "wavelengths_um": [
+  0.546074
+ ],
+ "raycrafter": "not yet tried",
+ "zemax_version": "OpticStudio 22.2.1",
+ "optiland_version": "0.6.3",
+ "source": "https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax",
+ "analysis": "generic",
+ "lede": "The fluorescence collection optics of the TWINKLE microscope: an 18.4 mm entrance pupil, a 45° fold mirror, an achromat pair, a dichroic mirror, a filter, an aspheric condenser and a 2.5 mm detector aperture, for fields up to 12°. Optiland's ray tracing reproduces Zemax's stored semi-diameters and, with the Zemax apertures applied, its relative-illumination roll-off.",
+ "viewer": true
+}

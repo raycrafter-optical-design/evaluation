@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TWINKLE excitation path against Zemax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p><a href="../../../index.html">All designs</a></p>
+  <ol>
+    <li><a href="#verdict">Zemax check: verdict by quantity</a></li>
+    <li><a href="#cmp-scan">Zemax angle scan: PSF width and focus shift</a></li>
+    <li><a href="#summary">Optiland detail: what works</a></li>
+    <li><a href="#layout">System layout</a></li>
+    <li><a href="#spots">Spots and scan linearity</a></li>
+    <li><a href="#issues">Optiland issues found</a></li>
+    <li><a href="#semi-diameters">Semi-diameters, every automatic surface</a></li>
+    <li><a href="#lens-data">Lens data</a></li>
+    <li><a href="#reproduce">Reproduce</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <p class="eyebrow">Optiland vs Zemax</p>
+  <h1>TWINKLE excitation path: Optiland against Zemax</h1>
+  <p class="lede">The full excitation path of the TWINKLE two-photon microscope in Optiland: a 4.39 mm beam, galvo mirror, relay, scan lens, tube lens, three fold mirrors, a tilted dichroic and an ideal objective. The Zemax file stores 22 galvo angles. Optiland loads only the first until we rewrite the file, and once we do, ray tracing agrees with Zemax to 0.14% on every surface Zemax computed a semi-diameter for. The PSF-based results Zemax gives (FWHM, field curvature) cannot be computed in Optiland at all, because its paraxial engine rejects the tilted galvo.</p>
+  <div class="meta">
+    <span>optiland <b>0.6.3</b></span>
+    <span>λ <b>0.92 µm</b></span>
+    <span>Zemax <b>OpticStudio 22.2.1</b></span>
+    <span>EPD <b>4.39 mm</b></span>
+    <span>fields <b>0°</b></span>
+    <span>run <b>2026-11-25</b></span>
+  </div>
+</header>
+
+<section id="verdict">
+  <h2>Zemax check: verdict by quantity</h2>
+  <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%.</p>
+  <div class="tally"><div><b style="color:var(--ok)">10</b><span>matching</span></div><div><b style="color:var(--warn)">0</b><span>partial</span></div><div><b style="color:var(--bad)">0</b><span>failing</span></div></div>
+  <div class="scroll"><table>
+  <thead><tr><th>Quantity</th><th class="num">Zemax</th><th class="num">Optiland</th><th class="num">Difference</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Semi-diameter, surface 1 (MEASURED: ~2.0mm beam) (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">2.1950</td><td class="num">2.1950</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 4 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">3.1042</td><td class="num">3.1084</td><td class="num">0.14%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 26 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">16.9749</td><td class="num">16.9776</td><td class="num">0.02%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 30 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">16.8994</td><td class="num">16.9020</td><td class="num">0.02%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 34 (dichroic) (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">15.9890</td><td class="num">16.0048</td><td class="num">0.10%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 35 (READ SEMI-DIAMETER HERE) (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">16.5586</td><td class="num">16.5750</td><td class="num">0.10%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 36 (Target is 2*2.5mm) (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">11.0323</td><td class="num">11.0346</td><td class="num">0.02%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 37 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">10.9031</td><td class="num">10.9054</td><td class="num">0.02%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 38 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">0.1461</td><td class="num">0.1461</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 39 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">0.1404</td><td class="num">0.1404</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
+  </tbody></table></div>
+  
+</section>
+
+<section id="cmp-scan">
+  <div class="title-row"><h2>Zemax angle scan: PSF width and focus shift</h2><span class="chip bad">Blocked in Optiland</span></div>
+  <p>The TWINKLE authors scanned the galvo from −10° to +10° in 0.5° steps and, at each angle, a Huygens PSF through focus in 0.1 µm steps (MATLAB driving the Zemax API; script in <code>Zemax_reference_output/</code>). They squared the PSF for two-photon excitation and measured radial FWHM, axial FWHM and the focus position. Values below are read from the vector markers of the MATLAB plot (digitised, not Zemax numeric output).</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../Zemax_reference_output/FieldCurvatureAndFWHM_vs_angle.png" alt="Zemax: field curvature, radial FWHM and axial FWHM against galvo angle"></div><figcaption>Zemax plot as supplied by the authors.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/zemax_scan_curves.png" alt="The same three curves redrawn from the digitised markers"></div><figcaption>The same markers redrawn from the SVG vertices.</figcaption></figure>
+  </div>
+  <p>On axis the two-photon radial FWHM is 0.77 µm and the axial FWHM 5.1 µm; both grow to 1.35 and 7.8 µm at ±10°. Focus moves by about ±0.4 µm.</p>
+  <div class="callout"><strong class="h">Optiland cannot reproduce this</strong><p>FFT PSF, wavefront and Strehl all raise <code>UnsupportedParaxialGeometryError</code> on this file (issue 8). There is no number to compare. Real rays do give a geometric picture below: the RMS spot radius is 0.05 to 0.33 µm, inside the 0.90 µm Airy radius at every angle, so the design is diffraction-limited on this evidence. That is a prediction to check against the Zemax widths once a PSF can be computed, not a match.</p></div>
+</section>
+
+<section id="summary">
+  <h2>Optiland detail: what works</h2>
+  <div class="scroll">
+  <table class="status-table">
+    <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Load the file (30 surfaces, 4 mirrors)</td><td><span class="chip ok">Works</span></td><td>Loads, with all surfaces. Tilted-surface and pickup data are lost (see issues).</td></tr>
+      <tr><td>Tilted dichroic plate (<code>SCBD</code>)</td><td><span class="chip warn">Works, patched</span></td><td>Ignored by the reader; expanded to coordinate breaks in <code>zemax_text.py</code>.</td></tr>
+      <tr><td>Galvo angle (22 configurations)</td><td><span class="chip warn">Works, patched</span></td><td>Only configuration 1 loads; others written into the file text and reloaded.</td></tr>
+      <tr><td>Real-ray trace, all 20 distinct galvo angles</td><td><span class="chip ok">Works</span></td><td>1801 of 1801 rays reach the image at every angle.</td></tr>
+      <tr><td>Semi-diameter on every automatic surface</td><td><span class="chip ok">Works</span></td><td>10 of 10 within 0.14%.</td></tr>
+      <tr><td>RMS spot vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Geometric.</td></tr>
+      <tr><td>Chief-ray position vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Linear scan, see below.</td></tr>
+      <tr><td>EFL, first-order data</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilts (issue 8).</td></tr>
+      <tr><td>RMS wavefront, Strehl, PSF, FWHM, field curvature</td><td><span class="chip bad">Blocked</span></td><td>Same cause. This is what Zemax's reference plots show.</td></tr>
+      <tr><td>3D viewer of the model</td><td><span class="chip warn">Partial</span></td><td>Shows one leg of the path (issue 10). Projected 2D layout works.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Ray paths in the plane of the system, from Optiland's global ray coordinates: source and galvo at top left, relay and scan lens down to the first fold, the long leg to the second fold, then tube lens and the objective at top right. Three galvo angles (−10°, 0°, +10°) are drawn.</figcaption></figure>
+
+  <details style="border-color:var(--rule)">
+    <summary style="color:var(--ink)">Show Optiland's own 3D viewer (incomplete for this system)</summary>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/layout_3d.png" alt="Optiland 3D viewer render showing only the first leg of the ray path"></div>
+      <figcaption>Optiland's VTK viewer. The rays stop at the galvo mirror and some elements are misplaced (issue 8 in <code>optiland_issues_found.md</code>). The projected layout above, drawn from the same ray coordinates, shows the whole path.</figcaption></figure>
+  </details>
+
+</section>
+
+<section id="spots">
+  <div class="title-row"><h2>Spots and scan linearity</h2><span class="chip ok">Works</span></div>
+  <p>At each of the 20 distinct galvo angles we traced a 24-ring hexapolar pupil to the image plane (Zemax surface 39, after the ideal objective). The chief ray moves -45.7 µm per degree of galvo angle, in a straight line to within a few µm, and the RMS spot radius stays below 0.35 µm. Dashed: the Airy radius from the real marginal-ray NA of 0.63.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against galvo angle"></div><figcaption>Geometric RMS spot radius against the Airy radius. It is smallest near ±4° to ±5° and rises towards ±10°, the same trend as the Zemax FWHM above.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/chief_ray_position.png" alt="Chief-ray position against galvo angle"></div><figcaption>Chief-ray position on the image plane against galvo angle.</figcaption></figure>
+  </div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams"></div><figcaption>Spot diagrams at five galvo angles, each centred on its own centroid, same scale.</figcaption></figure>
+</section>
+
+<section id="issues">
+  <h2>Optiland issues found</h2>
+  <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
+  <ul class="issue-list">
+    <li><b>5. Surface tilts (SCBD) ignored.</b> The tilted dichroic loads untilted, with no warning. <span class="chip warn">Patched locally</span></li>
+    <li><b>6. Parameter pickups (PPAR) ignored.</b> Only matters when a value is edited. <span class="chip warn">Patched locally</span></li>
+    <li><b>7. Multi-configuration data dropped.</b> Only configuration 1 loads; the galvo angles are configurations. <span class="chip warn">Worked around</span></li>
+    <li><b>8. Paraxial engine refuses tilted systems.</b> Blocks wavefront, PSF and Strehl on the tilted galvo systems. <span class="chip bad">Open</span></li>
+    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
+    <li><b>10. 3D viewer shows one leg of the excitation path.</b> Cause not located. <span class="chip bad">Open</span></li>
+  </ul>
+</section>
+
+<section id="semi-diameters">
+  <h2>Semi-diameters, every automatic surface</h2>
+  <p>The same comparison as the verdict table, with the ratio, including any row that was not scored.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax surface</th><th>Comment</th><th class="num">Zemax (mm)</th><th class="num">Optiland (mm)</th><th class="num">Ratio</th><th></th></tr></thead>
+  <tbody>
+      <tr><td class="num">1</td><td>MEASURED: ~2.0mm beam</td><td class="num">2.1950</td><td class="num">2.1950</td><td class="num">1.0000</td><td></td></tr>
+      <tr><td class="num">4</td><td></td><td class="num">3.1042</td><td class="num">3.1084</td><td class="num">1.0014</td><td></td></tr>
+      <tr><td class="num">26</td><td></td><td class="num">16.9749</td><td class="num">16.9776</td><td class="num">1.0002</td><td></td></tr>
+      <tr><td class="num">30</td><td></td><td class="num">16.8994</td><td class="num">16.9020</td><td class="num">1.0002</td><td></td></tr>
+      <tr><td class="num">34</td><td>dichroic</td><td class="num">15.9890</td><td class="num">16.0048</td><td class="num">1.0010</td><td></td></tr>
+      <tr><td class="num">35</td><td>READ SEMI-DIAMETER HERE</td><td class="num">16.5586</td><td class="num">16.5750</td><td class="num">1.0010</td><td></td></tr>
+      <tr><td class="num">36</td><td>Target is 2*2.5mm</td><td class="num">11.0323</td><td class="num">11.0346</td><td class="num">1.0002</td><td></td></tr>
+      <tr><td class="num">37</td><td></td><td class="num">10.9031</td><td class="num">10.9054</td><td class="num">1.0002</td><td></td></tr>
+      <tr><td class="num">38</td><td></td><td class="num">0.1461</td><td class="num">0.1461</td><td class="num">1.0000</td><td></td></tr>
+      <tr><td class="num">39</td><td></td><td class="num">0.1404</td><td class="num">0.1404</td><td class="num">1.0000</td><td></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="lens-data">
+  <h2>Lens data</h2>
+  <p>Prescription as stored in the Zemax file (coordinate breaks left out; Optiland absorbs them into the neighbouring surfaces). The Optiland radius is read back from the loaded model, so a difference would show an import error. Thicknesses are signed Zemax values: negative after a mirror.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax #</th><th>Comment</th><th>Type</th><th class="num">Radius, Zemax (mm)</th><th class="num">Radius, Optiland (mm)</th><th class="num">Thickness (mm)</th><th>Glass</th><th class="num">Semi-diameter (mm)</th><th class="num">Clear aperture (mm)</th></tr></thead>
+  <tbody>
+      <tr><td class="num">0</td><td>1mm diameter laser X2 magn.</td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">∞</td><td class="mono"></td><td class="num">0</td><td class="num"></td></tr>
+      <tr><td class="num">1</td><td>MEASURED: ~2.0mm beam</td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">20</td><td class="mono"></td><td class="num">2.195</td><td class="num">1</td></tr>
+      <tr><td class="num">4</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">0</td><td class="mono">MIRROR</td><td class="num">3.104</td><td class="num"></td></tr>
+      <tr><td class="num">7</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">-2.5</td><td class="mono">BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">8</td><td>KPC070AR.16</td><td>STANDARD</td><td class="num">-103.36</td><td class="num">-103.36</td><td class="num">-4.599</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">9</td><td>LB1199-B</td><td>STANDARD</td><td class="num">-204.98</td><td class="num">-204.98</td><td class="num">-6.16</td><td class="mono">N-BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">10</td><td></td><td>STANDARD</td><td class="num">204.98</td><td class="num">204.98</td><td class="num">-5</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">11</td><td>AC508-200-B</td><td>STANDARD</td><td class="num">-134</td><td class="num">-134</td><td class="num">-8.2</td><td class="mono">N-LAK22</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">12</td><td></td><td>STANDARD</td><td class="num">109.2</td><td class="num">109.2</td><td class="num">-5</td><td class="mono">N-SF6HT</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">13</td><td>The SL-TL telescope</td><td>STANDARD</td><td class="num">515.2</td><td class="num">515.2</td><td class="num">-2</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">14</td><td>is exactly 2X</td><td>STANDARD</td><td class="num">-515.2</td><td class="num">-515.2</td><td class="num">-5</td><td class="mono">N-SF6HT</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">15</td><td>see Disatnce2 file</td><td>STANDARD</td><td class="num">-109.2</td><td class="num">-109.2</td><td class="num">-8.2</td><td class="mono">N-LAK22</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">16</td><td>AC508-200-B</td><td>STANDARD</td><td class="num">134</td><td class="num">134</td><td class="num">-72.3</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">18</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">0</td><td class="mono">MIRROR</td><td class="num">38.1 (fixed)</td><td class="num">38.1</td></tr>
+      <tr><td class="num">21</td><td></td><td>STANDARD (stop)</td><td class="num">∞</td><td class="num">∞</td><td class="num">0</td><td class="mono">MIRROR</td><td class="num">38.1 (fixed)</td><td class="num">38.1</td></tr>
+      <tr><td class="num">23</td><td></td><td>STANDARD</td><td class="num">-1330.5</td><td class="num">-1330.5</td><td class="num">-2</td><td class="mono">SF2</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">24</td><td></td><td>STANDARD</td><td class="num">-336</td><td class="num">-336</td><td class="num">-4.5</td><td class="mono">N-BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">25</td><td>AC508-750-A</td><td>STANDARD</td><td class="num">417.8</td><td class="num">417.8</td><td class="num">-4</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">26</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">-0</td><td class="mono"></td><td class="num">16.975</td><td class="num"></td></tr>
+      <tr><td class="num">27</td><td></td><td>STANDARD</td><td class="num">-1330.5</td><td class="num">-1330.5</td><td class="num">-2</td><td class="mono">SF2</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">28</td><td></td><td>STANDARD</td><td class="num">-336</td><td class="num">-336</td><td class="num">-4.5</td><td class="mono">N-BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">29</td><td></td><td>STANDARD</td><td class="num">417.8</td><td class="num">417.8</td><td class="num">-4</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">30</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">-215.3</td><td class="mono"></td><td class="num">16.899</td><td class="num"></td></tr>
+      <tr><td class="num">32</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">-0</td><td class="mono">MIRROR</td><td class="num">38.1 (fixed)</td><td class="num">38.1</td></tr>
+      <tr><td class="num">34</td><td>dichroic</td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">1.1</td><td class="mono">N-BK7</td><td class="num">15.989</td><td class="num"></td></tr>
+      <tr><td class="num">35</td><td>READ SEMI-DIAMETER HERE</td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">50</td><td class="mono"></td><td class="num">16.559</td><td class="num"></td></tr>
+      <tr><td class="num">36</td><td>Target is 2*2.5mm</td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">7.2</td><td class="mono"></td><td class="num">11.032</td><td class="num">10</td></tr>
+      <tr><td class="num">37</td><td></td><td>PARAXIAL</td><td class="num">∞</td><td class="num">∞</td><td class="num">7.2</td><td class="mono"></td><td class="num">10.903</td><td class="num"></td></tr>
+      <tr><td class="num">38</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">0.0071</td><td class="mono"></td><td class="num">0.146</td><td class="num"></td></tr>
+      <tr><td class="num">39</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">0</td><td class="mono"></td><td class="num">0.14</td><td class="num"></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="reproduce" style="border-bottom:0">
+  <h2>Reproduce</h2>
+<pre>export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac
+uv run python -m evaluation_tools.analyze_zmx designs/twinkle_excitation   # about 1 to 3 minutes
+uv run python -m evaluation_tools.build_summary                    # regenerates all HTML</pre>
+  <p><code>zemax_text.py</code> holds the workarounds for features Optiland ignores (tilted surfaces, pickups, configurations). <code>analyze_zmx.py</code> runs the analysis and <code>build_generic.py</code> writes this page. The Zemax files come from the <a href="https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax">TWINKLE repository</a>.</p>
+</section>
+
+
+<footer>Generated 2026-11-25 with optiland 0.6.3 by <code>evaluation_tools/build_generic.py</code>. Zemax values come from the <code>.ZMX</code> file and the plots in <code>Zemax_reference_output/</code>.</footer>
+</main>
+</div>
+
+
+</body>
+</html>

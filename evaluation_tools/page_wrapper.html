@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>@@TITLE@@ against Zemax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p><a href="../../../index.html">All designs</a></p>
+  <ol>
+@@NAV@@
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <p class="eyebrow">Optiland vs Zemax</p>
+  <h1>@@TITLE@@: Optiland against Zemax</h1>
+  <p class="lede">@@LEDE@@</p>
+  <div class="meta">
+@@META@@
+  </div>
+</header>
+
+@@BODY@@
+
+<footer>Generated $GENERATED with optiland 0.6.3 by <code>evaluation_tools/build_generic.py</code>. Zemax values come from the <code>.ZMX</code> file and the plots in <code>Zemax_reference_output/</code>.</footer>
+</main>
+</div>
+
+<!--VIEWER-->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const box = document.getElementById("viewer");
+const hint = document.getElementById("viewer-hint");
+const fallback = document.getElementById("viewer-fallback");
+
+try {
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xdfe7ec);
+  const camera = new THREE.PerspectiveCamera(35, 16 / 9, 1, 20000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+  sun.position.set(300, 500, 400);
+  scene.add(sun);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const resize = () => {
+    const w = box.clientWidth, h = box.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(resize).observe(box);
+
+  let center = new THREE.Vector3(), radius = 300;
+  const views = {
+    iso: new THREE.Vector3(1, 0.55, -0.9),
+    side: new THREE.Vector3(1, 0, 0),
+    top: new THREE.Vector3(0, 1, 0.0001),
+  };
+  const setView = (k) => {
+    const d = views[k].clone().normalize().multiplyScalar(radius * 2.4);
+    camera.position.copy(center).add(d);
+    camera.up.set(k === "top" ? -1 : 0, k === "top" ? 0 : 1, 0);
+    controls.target.copy(center);
+    controls.update();
+  };
+  document.getElementById("view-iso").onclick = () => setView("iso");
+  document.getElementById("view-side").onclick = () => setView("side");
+  document.getElementById("view-top").onclick = () => setView("top");
+
+  const onModel = (gltf) => {
+    gltf.scene.traverse((o) => {
+      if (o.isMesh && o.material) {
+        o.material.side = THREE.DoubleSide;
+        if (o.material.transparent || o.material.opacity < 1) o.material.depthWrite = false;
+      }
+    });
+    scene.add(gltf.scene);
+    const bb = new THREE.Box3().setFromObject(gltf.scene);
+    bb.getCenter(center);
+    radius = bb.getSize(new THREE.Vector3()).length() / 2;
+    camera.near = radius / 100; camera.far = radius * 20; camera.updateProjectionMatrix();
+    box.appendChild(renderer.domElement);
+    resize();
+    setView("iso");
+    fallback.hidden = true;
+    hint.textContent = "Drag to rotate · scroll to zoom · right-drag to pan";
+    box.appendChild(hint);
+    renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+  };
+  const failed = () => { hint.textContent = "3D model could not load; showing the static render."; };
+  new GLTFLoader().load("../optiland_analysis/model.glb", onModel, undefined, failed);
+} catch (e) {
+  hint.textContent = "3D view not supported here; showing the static render.";
+}
+</script>
+<!--/VIEWER-->
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+ "name": "twinkle_scan_lens",
+ "title": "TWINKLE scan lens (alone)",
+ "summary": "Galvo, relay and the scan lens on their own, as a component check of the excitation path. 18 galvo angles in the file.",
+ "zmx": "just_scanlens.ZMX",
+ "wavelengths_um": [
+  0.92
+ ],
+ "raycrafter": "not yet tried",
+ "zemax_version": "OpticStudio 22.2.1",
+ "optiland_version": "0.6.3",
+ "source": "https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax",
+ "semi_diameter_excluded": {
+  "4": "The stored Zemax value (2.2278 mm) is close to the bare beam radius (2.195 mm), what a mirror at normal incidence would give, not the 1.414 x larger footprint on a 45 degree mirror. Every later surface agrees with Optiland to four digits, and the excitation file's value for the same mirror and beam (3.1042 mm) equals Optiland's 45 degree footprint. We think this stored value was not refreshed after the break was inserted; the cause is not established."
+ },
+ "analysis": "generic",
+ "lede": "The galvo, relay and scan lens of the TWINKLE excitation path on their own, with the same file structure (18 galvo angles in the Zemax file). Optiland's ray tracing agrees with the one Zemax semi-diameter that can be scored. The galvo-mirror value cannot: it looks stale in the Zemax file. Wavefront and PSF are blocked, as for the full path.",
+ "viewer": false
+}

@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>TWINKLE tube lens (alone) against Zemax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p><a href="../../../index.html">All designs</a></p>
+  <ol>
+    <li><a href="#verdict">Zemax check: verdict by quantity</a></li>
+    <li><a href="#summary">Optiland detail: what works</a></li>
+    <li><a href="#layout">System layout</a></li>
+    <li><a href="#spots">Spots against galvo angle</a></li>
+    <li><a href="#issues">Optiland issues found</a></li>
+    <li><a href="#semi-diameters">Semi-diameters, every automatic surface</a></li>
+    <li><a href="#lens-data">Lens data</a></li>
+    <li><a href="#reproduce">Reproduce</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <p class="eyebrow">Optiland vs Zemax</p>
+  <h1>TWINKLE tube lens (alone): Optiland against Zemax</h1>
+  <p class="lede">The tube-lens pair of the TWINKLE excitation path on its own, with a collimated 4.39 mm beam and 6 small galvo configurations. This is the one TWINKLE file where Optiland's wavefront and PSF tools run, because the galvo is at 0° in configuration 1.</p>
+  <div class="meta">
+    <span>optiland <b>0.6.3</b></span>
+    <span>λ <b>0.92 µm</b></span>
+    <span>Zemax <b>OpticStudio 22.2.1</b></span>
+    <span>EPD <b>4.39 mm</b></span>
+    <span>fields <b>0°</b></span>
+    <span>run <b>2026-11-25</b></span>
+  </div>
+</header>
+
+<section id="verdict">
+  <h2>Zemax check: verdict by quantity</h2>
+  <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%.</p>
+  <div class="tally"><div><b style="color:var(--ok)">2</b><span>matching</span></div><div><b style="color:var(--warn)">0</b><span>partial</span></div><div><b style="color:var(--bad)">0</b><span>failing</span></div></div>
+  <div class="scroll"><table>
+  <thead><tr><th>Quantity</th><th class="num">Zemax</th><th class="num">Optiland</th><th class="num">Difference</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Semi-diameter, surface 1 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">2.1950</td><td class="num">2.1950</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Semi-diameter, surface 10 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">2.1813</td><td class="num">2.1813</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
+  </tbody></table></div>
+  <div class="callout warn"><strong class="h">Not scored</strong><p><strong>Surface 4</strong>: Zemax 2.1950 mm, Optiland 3.1042 mm. The stored Zemax value (2.195 mm) is exactly the bare beam radius (2.195 mm), what a mirror at normal incidence would give, not the 1.414 x larger footprint on a 45 degree mirror. Every later surface agrees with Optiland to four digits, and the excitation file&#x27;s value for the same mirror and beam (3.1042 mm) equals Optiland&#x27;s 45 degree footprint. We think this stored value was not refreshed after the break was inserted; the cause is not established.</p></div>
+</section>
+
+<section id="summary">
+  <h2>Optiland detail: what works</h2>
+  <div class="scroll">
+  <table class="status-table">
+    <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>Load the file</td><td><span class="chip ok">Works</span></td><td>Loads.</td></tr>
+      <tr><td>Galvo angle (6 configurations)</td><td><span class="chip warn">Works, patched</span></td><td>Written into the file text and reloaded for each angle.</td></tr>
+      <tr><td>Real-ray trace, all 5 distinct angles</td><td><span class="chip ok">Works</span></td><td>1801 of 1801 rays reach the image at each.</td></tr>
+      <tr><td>Semi-diameter on automatic surfaces</td><td><span class="chip ok">Works</span></td><td>Matches on the lens surfaces. The galvo mirror is not scored (see above).</td></tr>
+      <tr><td>EFL</td><td><span class="chip ok">Works</span></td><td>-378.8 mm in Optiland's sign convention (reversed propagation). No Zemax value to compare.</td></tr>
+      <tr><td>FFT PSF, Strehl on axis</td><td><span class="chip ok">Works</span></td><td>Strehl 0.998 at 0° (diffraction-limited).</td></tr>
+      <tr><td>PSF off axis (tilted configurations)</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilt (issue 8).</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Ray paths in the plane of the system. The vertical axis is exaggerated.</figcaption></figure>
+
+  <h3>Interactive 3D</h3>
+  <div id="viewer" aria-label="3D model of the optical system">
+    <img src="../optiland_analysis/figs/layout_3d.png" alt="Static 3D render of the optical system from optiland's VTK viewer" id="viewer-fallback">
+    <span class="hint" id="viewer-hint">Loading 3D model…</span>
+  </div>
+  <div class="viewer-bar">
+    <button type="button" id="view-iso">Isometric</button>
+    <button type="button" id="view-side">Side (YZ)</button>
+    <button type="button" id="view-top">Top (XZ)</button>
+  </div>
+  <p style="font-size:13px;color:var(--muted)">The scene from Optiland's own VTK 3D viewer, rendered offscreen and exported as glTF. Drag to rotate, scroll to zoom, right-drag to pan.</p>
+
+</section>
+
+<section id="spots">
+  <div class="title-row"><h2>Spots against galvo angle</h2><span class="chip ok">Works</span></div>
+  <p>Image NA 0.0058, Airy radius 97 µm. On axis the geometric RMS radius is 0.02 µm; at ±2° it is 5.8 µm, still far below the Airy radius.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against galvo angle"></div><figcaption>Geometric RMS spot radius against Airy radius (dashed).</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/chief_ray_position.png" alt="Chief-ray position against galvo angle"></div><figcaption>Chief-ray position against galvo angle.</figcaption></figure>
+  </div>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams"></div><figcaption>Spot diagrams at each galvo angle.</figcaption></figure>
+</section>
+
+<section id="issues">
+  <h2>Optiland issues found</h2>
+  <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
+  <ul class="issue-list">
+    <li><b>5. Surface tilts (SCBD) ignored.</b> The tilted dichroic loads untilted, with no warning. <span class="chip warn">Patched locally</span></li>
+    <li><b>6. Parameter pickups (PPAR) ignored.</b> Only matters when a value is edited. <span class="chip warn">Patched locally</span></li>
+    <li><b>7. Multi-configuration data dropped.</b> Only configuration 1 loads; the galvo angles are configurations. <span class="chip warn">Worked around</span></li>
+    <li><b>8. Paraxial engine refuses tilted systems.</b> Blocks wavefront, PSF and Strehl on the tilted galvo systems. <span class="chip bad">Open</span></li>
+    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
+  </ul>
+</section>
+
+<section id="semi-diameters">
+  <h2>Semi-diameters, every automatic surface</h2>
+  <p>The same comparison as the verdict table, with the ratio, including any row that was not scored.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax surface</th><th>Comment</th><th class="num">Zemax (mm)</th><th class="num">Optiland (mm)</th><th class="num">Ratio</th><th></th></tr></thead>
+  <tbody>
+      <tr><td class="num">1</td><td></td><td class="num">2.1950</td><td class="num">2.1950</td><td class="num">1.0000</td><td></td></tr>
+      <tr><td class="num">4</td><td></td><td class="num">2.1950</td><td class="num">3.1042</td><td class="num">1.4142</td><td>not scored</td></tr>
+      <tr><td class="num">10</td><td></td><td class="num">2.1813</td><td class="num">2.1813</td><td class="num">1.0000</td><td></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="lens-data">
+  <h2>Lens data</h2>
+  <p>Prescription as stored in the Zemax file (coordinate breaks left out; Optiland absorbs them into the neighbouring surfaces). The Optiland radius is read back from the loaded model, so a difference would show an import error. Thicknesses are signed Zemax values: negative after a mirror.</p>
+  <div class="scroll"><table>
+  <thead><tr><th class="num">Zemax #</th><th>Comment</th><th>Type</th><th class="num">Radius, Zemax (mm)</th><th class="num">Radius, Optiland (mm)</th><th class="num">Thickness (mm)</th><th>Glass</th><th class="num">Semi-diameter (mm)</th><th class="num">Clear aperture (mm)</th></tr></thead>
+  <tbody>
+      <tr><td class="num">0</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">∞</td><td class="mono"></td><td class="num">0</td><td class="num"></td></tr>
+      <tr><td class="num">1</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">20</td><td class="mono"></td><td class="num">2.195</td><td class="num"></td></tr>
+      <tr><td class="num">4</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">0</td><td class="mono">MIRROR</td><td class="num">2.195</td><td class="num"></td></tr>
+      <tr><td class="num">7</td><td></td><td>STANDARD (stop)</td><td class="num">-1330.5</td><td class="num">-1330.5</td><td class="num">-2</td><td class="mono">SF2</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">8</td><td></td><td>STANDARD</td><td class="num">-336</td><td class="num">-336</td><td class="num">-4.5</td><td class="mono">N-BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">9</td><td>AC508-750-A</td><td>STANDARD</td><td class="num">417.8</td><td class="num">417.8</td><td class="num">-4</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">10</td><td></td><td>STANDARD</td><td class="num">∞</td><td class="num">∞</td><td class="num">-0</td><td class="mono"></td><td class="num">2.181</td><td class="num"></td></tr>
+      <tr><td class="num">11</td><td></td><td>STANDARD</td><td class="num">-1330.5</td><td class="num">-1330.5</td><td class="num">-2</td><td class="mono">SF2</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">12</td><td></td><td>STANDARD</td><td class="num">-336</td><td class="num">-336</td><td class="num">-4.5</td><td class="mono">N-BK7</td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">13</td><td></td><td>STANDARD</td><td class="num">417.8</td><td class="num">417.8</td><td class="num">-373.9935</td><td class="mono"></td><td class="num">25.4 (fixed)</td><td class="num">25.4</td></tr>
+      <tr><td class="num">14</td><td></td><td>STANDARD</td><td class="num">113.236</td><td class="num">113.236</td><td class="num">0</td><td class="mono"></td><td class="num">0</td><td class="num"></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="reproduce" style="border-bottom:0">
+  <h2>Reproduce</h2>
+<pre>export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac
+uv run python -m evaluation_tools.analyze_zmx designs/twinkle_tube_lens   # about 1 to 3 minutes
+uv run python -m evaluation_tools.build_summary                    # regenerates all HTML</pre>
+  <p><code>zemax_text.py</code> holds the workarounds for features Optiland ignores (tilted surfaces, pickups, configurations). <code>analyze_zmx.py</code> runs the analysis and <code>build_generic.py</code> writes this page. The Zemax files come from the <a href="https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax">TWINKLE repository</a>.</p>
+</section>
+
+
+<footer>Generated 2026-11-25 with optiland 0.6.3 by <code>evaluation_tools/build_generic.py</code>. Zemax values come from the <code>.ZMX</code> file and the plots in <code>Zemax_reference_output/</code>.</footer>
+</main>
+</div>
+
+<!--VIEWER-->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const box = document.getElementById("viewer");
+const hint = document.getElementById("viewer-hint");
+const fallback = document.getElementById("viewer-fallback");
+
+try {
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xdfe7ec);
+  const camera = new THREE.PerspectiveCamera(35, 16 / 9, 1, 20000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+  sun.position.set(300, 500, 400);
+  scene.add(sun);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const resize = () => {
+    const w = box.clientWidth, h = box.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(resize).observe(box);
+
+  let center = new THREE.Vector3(), radius = 300;
+  const views = {
+    iso: new THREE.Vector3(1, 0.55, -0.9),
+    side: new THREE.Vector3(1, 0, 0),
+    top: new THREE.Vector3(0, 1, 0.0001),
+  };
+  const setView = (k) => {
+    const d = views[k].clone().normalize().multiplyScalar(radius * 2.4);
+    camera.position.copy(center).add(d);
+    camera.up.set(k === "top" ? -1 : 0, k === "top" ? 0 : 1, 0);
+    controls.target.copy(center);
+    controls.update();
+  };
+  document.getElementById("view-iso").onclick = () => setView("iso");
+  document.getElementById("view-side").onclick = () => setView("side");
+  document.getElementById("view-top").onclick = () => setView("top");
+
+  const onModel = (gltf) => {
+    gltf.scene.traverse((o) => {
+      if (o.isMesh && o.material) {
+        o.material.side = THREE.DoubleSide;
+        if (o.material.transparent || o.material.opacity < 1) o.material.depthWrite = false;
+      }
+    });
+    scene.add(gltf.scene);
+    const bb = new THREE.Box3().setFromObject(gltf.scene);
+    bb.getCenter(center);
+    radius = bb.getSize(new THREE.Vector3()).length() / 2;
+    camera.near = radius / 100; camera.far = radius * 20; camera.updateProjectionMatrix();
+    box.appendChild(renderer.domElement);
+    resize();
+    setView("iso");
+    fallback.hidden = true;
+    hint.textContent = "Drag to rotate · scroll to zoom · right-drag to pan";
+    box.appendChild(hint);
+    renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+  };
+  const failed = () => { hint.textContent = "3D model could not load; showing the static render."; };
+  new GLTFLoader().load("../optiland_analysis/model.glb", onModel, undefined, failed);
+} catch (e) {
+  hint.textContent = "3D view not supported here; showing the static render.";
+}
+</script>
+<!--/VIEWER-->
+</body>
+</html>
