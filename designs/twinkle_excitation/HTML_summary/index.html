@@ -41,7 +41,7 @@
   </div>
 </header>
 
-<section id="not-working" style="padding-block:1.4rem .4rem;border-bottom:0"><div class="callout"><strong class="h">Not working on this page</strong><ul><li><b>Wavefront, PSF, Strehl and FWHM.</b> Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared. <i>Cause: Optiland's paraxial engine (issue 8; upstream roadmap #865).</i></li><li><b>Optiland's 3D viewer.</b> Shows only the first leg of the path and misplaces elements. <i>Cause: not located (issue 10).</i></li><li><b>Galvo angles and tilted surfaces on import.</b> Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong. <i>Cause: Optiland's Zemax reader silently drops them (issues 5 to 7).</i></li></ul></div></section>
+<section id="not-working" style="padding-block:1.4rem .4rem;border-bottom:0"><div class="callout"><strong class="h">Not working on this page</strong><ul><li><b>Wavefront, PSF, Strehl and FWHM.</b> Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared. <i>Cause: Optiland's paraxial engine (issue 8; upstream roadmap #865).</i> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/865">#865</a> (roadmap, with our comment), <a href="https://github.com/optiland/optiland/issues/1210">#1210</a>.</span></li><li><b>Optiland's 3D viewer.</b> Shows only the first leg of the path and misplaces elements. <i>Cause: not located (issue 10).</i> <span class="src">Upstream: not yet filed.</span></li><li><b>Galvo angles and tilted surfaces on import.</b> Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong. <i>Cause: Optiland's Zemax reader silently drops them (issues 5 to 7).</i> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1247">#1247</a>.</span></li></ul></div></section>
 
 <section id="verdict">
   <h2>Zemax check: verdict by quantity</h2>
@@ -124,12 +124,12 @@
   <h2>Optiland issues found</h2>
   <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
   <ul class="issue-list">
-    <li><b>5. Surface tilts (SCBD) ignored.</b> The tilted dichroic loads untilted, with no warning. <span class="chip warn">Patched locally</span></li>
-    <li><b>6. Parameter pickups (PPAR) ignored.</b> Only matters when a value is edited. <span class="chip warn">Patched locally</span></li>
-    <li><b>7. Multi-configuration data dropped.</b> Only configuration 1 loads; the galvo angles are configurations. <span class="chip warn">Worked around</span></li>
-    <li><b>8. Paraxial engine refuses tilted systems.</b> Blocks wavefront, PSF and Strehl on the tilted galvo systems. <span class="chip bad">Open</span></li>
-    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
-    <li><b>10. 3D viewer shows one leg of the excitation path.</b> Cause not located. <span class="chip bad">Open</span></li>
+    <li><b>5. Surface tilts (SCBD) ignored.</b> The tilted dichroic loads untilted, with no warning. <span class="chip warn">Patched locally</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1247">#1247</a>.</span></li>
+    <li><b>6. Parameter pickups (PPAR) ignored.</b> Only matters when a value is edited. <span class="chip warn">Patched locally</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1247">#1247</a>.</span></li>
+    <li><b>7. Multi-configuration data dropped.</b> Only configuration 1 loads; the galvo angles are configurations. <span class="chip warn">Worked around</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1247">#1247</a>.</span></li>
+    <li><b>8. Paraxial engine refuses tilted systems.</b> Blocks wavefront, PSF and Strehl on the tilted galvo systems. <span class="chip bad">Open</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/865">#865</a> (roadmap, with our comment), <a href="https://github.com/optiland/optiland/issues/1210">#1210</a>.</span></li>
+    <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span> <span class="src">Upstream: not yet filed.</span></li>
+    <li><b>10. 3D viewer shows one leg of the excitation path.</b> Cause not located. <span class="chip bad">Open</span> <span class="src">Upstream: not yet filed.</span></li>
   </ul>
 </section>
 

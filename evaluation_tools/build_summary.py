@@ -15,13 +15,38 @@ from __future__ import annotations
 
 import html
 import json
+import re
 from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+UPSTREAM_PATH = Path(__file__).with_name("upstream_issues.json")
 STATUS_LABEL = {"match": "Match", "partial": "Partial", "fail": "Fail"}
 STATUS_CLASS = {"match": "ok", "partial": "warn", "fail": "bad"}
 WAVELENGTH_KEYS = ["0.85", "0.94", "1.1"]
+
+
+# ------------------------------------------------------------------ upstream links ---
+def upstream_links_html(issue_number: str) -> str:
+    """ "Upstream: ..." line for local issue ``issue_number`` (links, or 'not yet filed')."""
+    links = json.loads(UPSTREAM_PATH.read_text(encoding="utf-8"))["links"].get(issue_number, [])
+    if not links:
+        return '<span class="src">Upstream: not yet filed.</span>'
+    parts = [
+        f'<a href="{url}">{html.escape(label)}</a>' + (f" ({html.escape(note)})" if note else "")
+        for label, url, note in links
+    ]
+    return f'<span class="src">Upstream: {", ".join(parts)}.</span>'
+
+
+def link_upstream_issues(page: str) -> str:
+    """Add an upstream line to every ``<li><b>N. ...`` entry of the page's issue list."""
+    return re.sub(
+        r"(<li><b>(\d+)\. .*?)(</li>)",
+        lambda m: m.group(1) + " " + upstream_links_html(m.group(2)) + m.group(3),
+        page,
+        flags=re.S,
+    )
 
 
 # ------------------------------------------------------------------ comparison ---
@@ -207,6 +232,7 @@ def build_design(design_dir: Path) -> dict:
         .replace("$GENERATED", date.today().isoformat())
         .replace("@@CHART_DATA@@", json.dumps(chart_data(results, digitised)))
     )
+    page = link_upstream_issues(page)
     (design_dir / "HTML_summary" / "index.html").write_text(page, encoding="utf-8")
     return {"design": design, "counts": counts, "dir_name": design_dir.name}
 
@@ -242,7 +268,7 @@ LANDING_TEMPLATE = """<!doctype html>
   and compare. Every page puts the verdict first (match, partial or fail, computed from stated
   tolerances), then the evidence: the Zemax output next to ours, then the full Optiland analysis.
   Problems we find in Optiland are written up in
-  <a href="https://github.com/raycrafter-optical-design/evaluation/blob/main/optiland_issues_found.md">optiland_issues_found.md</a>.</p>
+  <a href="https://github.com/raycrafter-optical-design/evaluation/blob/main/optiland_issues_found.md">optiland_issues_found.md</a>, and each one lists where it stands upstream in <a href="https://github.com/optiland/optiland/issues">optiland/optiland</a> (so far <a href="https://github.com/optiland/optiland/issues/1210">#1210</a>, <a href="https://github.com/optiland/optiland/issues/1247">#1247</a>, <a href="https://github.com/optiland/optiland/issues/1248">#1248</a> and a comment on <a href="https://github.com/optiland/optiland/issues/865">#865</a>).</p>
   <p>The repository is also where RayCrafter is pointed at designs that largely work in Optiland, with
   the goal that they work in RayCrafter too.</p>
   <p>Each design folder holds the Zemax export, a <code>Zemax_reference_output/</code> folder (what we

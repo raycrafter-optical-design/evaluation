@@ -20,12 +20,14 @@
   {
    "what": "Wavefront, PSF, Strehl and FWHM.",
    "detail": "Works on axis only (Strehl 0.998); blocked for the tilted configurations.",
-   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."
+   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865).",
+   "issue": "8"
   },
   {
    "what": "Galvo angles and tilted surfaces on import.",
    "detail": "Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong.",
-   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7)."
+   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7).",
+   "issue": "5"
   }
  ]
 }

@@ -88,7 +88,8 @@ def not_working_html(design: dict) -> str:
     if not items:
         return ""
     lis = "".join(
-        f"<li><b>{item['what']}</b> {item['detail']} <i>Cause: {item['cause']}</i></li>"
+        f"<li><b>{item['what']}</b> {item['detail']} <i>Cause: {item['cause']}</i> "
+        f"{build_summary.upstream_links_html(item['issue'])}</li>"
         for item in items
     )
     return (
@@ -152,5 +153,6 @@ def build_design(design_dir: Path) -> dict:
     if 'id="viewer"' not in body:  # drop the 3D viewer script when the page has no viewer
         page = re.sub(r"<!--VIEWER-->.*?<!--/VIEWER-->", "", page, flags=re.S)
     page = page.replace("$GENERATED", date.today().isoformat())
+    page = build_summary.link_upstream_issues(page)
     (design_dir / "HTML_summary" / "index.html").write_text(page, encoding="utf-8")
     return {"design": design, "counts": counts, "dir_name": design_dir.name}

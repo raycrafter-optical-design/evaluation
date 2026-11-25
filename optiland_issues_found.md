@@ -26,6 +26,8 @@
 
 ## 1. `ThinLensInteractionModel` reverses rays travelling in −z (after a mirror) — CONFIRMED, patched locally
 
+**Upstream:** [PR #1109](https://github.com/optiland/optiland/pull/1109) (fixed on main for real rays), [#1210](https://github.com/optiland/optiland/issues/1210) (paraxial path).
+
 **File:** `optiland/interactions/thin_lens_interaction_model.py`, `interact_real_rays`.
 
 **Symptom:** In the folded system, the full-field chief ray reaches the paraxial objective (Zemax surface 21, optiland index 19) travelling +y globally. In the objective's local frame that is N < 0, because the surface follows the mirror and has negative thickness. Coming out of the thin lens, its direction is reversed: global M goes from +0.9993 to −0.992. Rays then "land" on the image plane by propagating backwards. The image height at 10° comes out as 2.71 mm instead of ≈0.47 mm.
@@ -88,6 +90,8 @@ These are consistent with Zemax (0.475 mm semi-diameter) and with the unfolded m
 
 ## 2. Paraxial engine is wrong for systems with a fold mirror (COORDBRK + MIRROR + negative thicknesses) — CONFIRMED (cause not located)
 
+**Upstream:** [#1210](https://github.com/optiland/optiland/issues/1210).
+
 **Symptom:** paraxial quantities differ between the folded file and an optically identical unfolded version. The unfolded version replaces the flat mirror with a dummy plane and makes the thicknesses after it positive (`unfold_text()` in `load_system.py`). This holds with or without the issue-1 patch, because the paraxial tracer has its own path.
 
 | Quantity | Folded | Unfolded | Real-ray check |
@@ -120,6 +124,8 @@ for unf in (False, True):
 ---
 
 ## 3. Paraxial (thin) lens is not aberration-free off-axis: big spurious RMS WFE, near-zero Strehl — CONFIRMED (cause not located)
+
+**Upstream:** [#1248](https://github.com/optiland/optiland/issues/1248).
 
 This is the issue that currently blocks the RMS-wavefront-vs-field and Strehl-vs-field requirements.
 
@@ -182,6 +188,8 @@ RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 
 ## 4. Zemax surface comments (`COMM`) are dropped on import — CONFIRMED (minor)
 
+**Upstream:** not yet filed.
+
 **Symptom:** `op.info()` shows an empty *Comment* column. The file has comments on several surfaces: `X-galvo`, `AC508-075-B`, `LE1015-B`, `PBS255`, `ACT508-500-B`, `enterance to flip cube`, `underside of filp cube`, `Back aperture`.
 
 **Where:** `optiland/fileio/zemax/reader/parser.py` (no `COMM` handler in the operand table around line 65) and `reader/converter.py` (comment not passed to `surfaces.add`). The `Surface` object needs a `comment` attribute if it doesn't already have one. The writer should round-trip it as well.
@@ -192,6 +200,8 @@ RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 
 ## 5. Zemax `SCBD` (surface tilt/decenter) is ignored on import — CONFIRMED, patched locally
 
+**Upstream:** [#1247](https://github.com/optiland/optiland/issues/1247).
+
 **Found with:** `designs/twinkle_excitation` (the 45° dichroic plate, Zemax surfaces 34 and 35).
 
 **Symptom:** the reader has no handler for the `SCBD` line, so a tilted surface is loaded untilted, with no warning. Downstream semi-diameters are wrong: surface 36 comes out 10.24 mm against Zemax's stored 11.03 mm. Zemax's own value matches once the tilt is applied.
@@ -200,13 +210,19 @@ RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 
 ## 6. Zemax parameter pickups (`PPAR`) are ignored — CONFIRMED (matters when a value is edited)
 
+**Upstream:** [#1247](https://github.com/optiland/optiland/issues/1247).
+
 Values stored in the file are loaded as numbers, so an unedited file is right. A pickup (the galvo return tilt is −1 × the galvo tilt) is lost, so editing the galvo angle in Optiland leaves the return break at its old value. Workaround: `zemax_text.apply_pickups`. RayCrafter should keep pickups if it lets the user edit a design.
 
 ## 7. Multi-configuration data (`MNUM`/`PRAM`) is dropped silently — CONFIRMED
 
+**Upstream:** [#1247](https://github.com/optiland/optiland/issues/1247).
+
 Optiland loads configuration 1 only. The TWINKLE galvo angles (22 configurations in the excitation file, 18 in the scan lens) are all configuration data, so 21 of 22 are lost with no message. Workaround: `zemax_text.set_galvo_angle` writes any configuration's value into the file text and reloads. (The excitation file lists −4° twice and has no −3°; that is in the Zemax file, not an import problem.)
 
 ## 8. Paraxial engine refuses tilted or multi-fold systems, which blocks wavefront, PSF and Strehl — CONFIRMED
+
+**Upstream:** [#865](https://github.com/optiland/optiland/issues/865) (roadmap, with our comment), [#1210](https://github.com/optiland/optiland/issues/1210).
 
 **Found with:** `twinkle_excitation` and `twinkle_scan_lens` (tilted galvo mirror, several folds).
 
@@ -216,9 +232,13 @@ Optiland loads configuration 1 only. The TWINKLE galvo angles (22 configurations
 
 ## 9. `Optic.draw` (2D layout) mangles folded or tilted systems — CONFIRMED
 
+**Upstream:** not yet filed.
+
 On the collection optics, `op.draw()` shows rays rising to 45 mm above the axis at z = 50 mm, nothing like the real layout. It appears to plot every surface in the global y–z plane. This evaluation draws its own projection from the global ray coordinates (`analyze_zmx.layout_figure`).
 
 ## 10. 3D viewer shows only the first leg of the excitation path — CONFIRMED (cause not located)
+
+**Upstream:** not yet filed.
 
 `OpticViewer3D` draws the rays up to the galvo mirror and then stops, and several elements appear in the wrong places. The same viewer is correct for the collection optics and the tube lens. The ray coordinates themselves are right (the projected layout from the same coordinates shows the full path), so the fault seems to be in the viewer. See the excitation page.
 

@@ -20,17 +20,20 @@
   {
    "what": "Wavefront, PSF, Strehl and FWHM.",
    "detail": "Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared.",
-   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."
+   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865).",
+   "issue": "8"
   },
   {
    "what": "Optiland's 3D viewer.",
    "detail": "Shows only the first leg of the path and misplaces elements.",
-   "cause": "not located (issue 10)."
+   "cause": "not located (issue 10).",
+   "issue": "10"
   },
   {
    "what": "Galvo angles and tilted surfaces on import.",
    "detail": "Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong.",
-   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7)."
+   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7).",
+   "issue": "5"
   }
  ]
 }
