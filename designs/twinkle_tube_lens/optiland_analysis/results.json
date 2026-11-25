@@ -1,6 +1,6 @@
 {
  "figs": {
-  "layout_rays": "figs/layout_rays.png",
+  "layout": "figs/layout.png",
   "rms_spot": "figs/rms_spot.png",
   "chief_ray_position": "figs/chief_ray_position.png",
   "spots": "figs/spots.png",

@@ -13,11 +13,5 @@
  "analysis": "generic",
  "lede": "The fluorescence collection optics of the TWINKLE microscope: an 18.4 mm entrance pupil, a 45° fold mirror, an achromat pair, a dichroic mirror, a filter, an aspheric condenser and a 2.5 mm detector aperture, for fields up to 12°. Optiland's ray tracing reproduces Zemax's stored semi-diameters and, with the Zemax apertures applied, its relative-illumination roll-off.",
  "viewer": true,
- "not_working": [
-  {
-   "what": "System layout drawing.",
-   "detail": "The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only.",
-   "cause": "our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9)."
-  }
- ]
+ "not_working": []
 }

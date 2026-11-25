@@ -30,6 +30,7 @@ import numpy as np
 
 from evaluation_tools import analyze, digitise_svg
 from evaluation_tools.analyze import local_xy, to_np
+from evaluation_tools.draw_layout import draw_layout
 from evaluation_tools.load_system import load
 from evaluation_tools.zemax_text import configuration_values, galvo_surface_index
 
@@ -181,52 +182,6 @@ def layout_fields(hy_values: list[float]) -> list[float]:
     """Smallest, middle (0) and largest normalised field, so the layout stays readable."""
     chosen = {min(hy_values), max(hy_values)} | ({0.0} if 0.0 in hy_values else set())
     return sorted(chosen)
-
-
-def layout_figure(op, hy_values: list[float], results: dict, title: str) -> None:
-    """Ray paths in the plane of the system, from Optiland's own global ray coordinates.
-
-    Optiland's ``op.draw`` is not usable here: it plots every surface in the global y-z plane
-    and so mangles tilted or folded systems. We project the global ray points onto the plane
-    that best fits the chief-ray path (principal axes of the path points).
-    """
-    primary = op.wavelengths.primary_wavelength.value
-    paths, mirror_points = [], []
-    for hy in hy_values:
-        op.trace(0.0, hy, primary, 1, "hexapolar")
-        points = np.stack(
-            [np.stack([to_np(s.x), to_np(s.y), to_np(s.z)]) for s in op.surfaces[1:]]
-        )  # (surfaces, xyz, rays)
-        paths.append(points)
-        for index, surface in enumerate(op.surfaces[1:]):
-            if surface.interaction_model.is_reflective and hy == hy_values[0]:
-                mirror_points.append(points[index, :, 0])
-    chief = np.stack([path[:, :, 0] for path in paths]).reshape(-1, 3)
-    chief = chief[np.isfinite(chief).all(axis=1)]
-    centre = chief.mean(axis=0)
-    axes = np.linalg.svd(chief - centre)[2][:2]
-    fig, ax = plt.subplots(figsize=(11, 4.8))
-    for k, points in enumerate(paths):
-        for ray in range(points.shape[2]):
-            xy = (points[:, :, ray] - centre) @ axes.T
-            ax.plot(xy[:, 0], xy[:, 1], lw=0.6, color=COLOURS[k % len(COLOURS)], alpha=0.8)
-    for point in mirror_points:
-        xy = (point - centre) @ axes.T
-        ax.plot(xy[0], xy[1], "ks", ms=6)
-    all_points = np.concatenate(
-        [((p.transpose(0, 2, 1) - centre) @ axes.T).reshape(-1, 2) for p in paths]
-    )
-    all_points = all_points[np.isfinite(all_points).all(axis=1)]
-    spans = np.ptp(all_points, axis=0)
-    if spans[0] < 4 * spans[1]:
-        ax.set_aspect("equal")
-        ax.set_ylabel("perpendicular (mm)")
-    else:  # a long thin system: equal aspect would be unreadable
-        ax.set_ylabel("perpendicular (mm), scale exaggerated")
-    ax.set_xlabel("position along the main axis of the system (mm)")
-    ax.set_title(title + " (black squares: mirrors)")
-    ax.grid(alpha=0.3)
-    results["figs"]["layout_rays"] = analyze.save(fig, "layout_rays")
 
 
 def spot_figure(
@@ -625,7 +580,8 @@ def main(design_dir: Path) -> None:
         "field_deg": angles,
         "fraction": transmission_vs_field(op, hy_values),
     }
-    layout_figure(op, layout_fields(hy_values), results, f"{design['title']}: Optiland ray paths")
+    fig = draw_layout(op, zemax_surfaces, layout_fields(hy_values), design["title"])
+    results["figs"]["layout"] = analyze.save(fig, "layout")
 
     reference = spot_reference(op, zemax_surfaces, primary)
     results["spot_reference"] = reference

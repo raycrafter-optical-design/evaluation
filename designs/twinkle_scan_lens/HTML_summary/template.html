@@ -22,17 +22,17 @@
       <tr><td>Semi-diameter on automatic surfaces</td><td><span class="chip ok">Works</span></td><td>The scan-lens image plane matches exactly. The galvo mirror is not scored (see above).</td></tr>
       <tr><td>RMS spot vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Geometric.</td></tr>
       <tr><td>RMS wavefront, Strehl, PSF</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilts (issue 8).</td></tr>
-      <tr><td>System layout drawing and 3D viewer</td><td><span class="chip bad">Not working</span></td><td>See the layout section.</td></tr>
+      <tr><td>Optiland 3D viewer</td><td><span class="chip bad">Not working</span></td><td>See the layout section.</td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
 <section id="layout">
-  <div class="title-row"><h2>System layout</h2><span class="chip bad">Not working</span></div>
-  <p><strong>This drawing is not a reliable picture of the system.</strong> It has no lenses, and rays are projected onto a single best-fit plane, which distorts systems that fold in more than one plane. Rays kink at every refracting surface because nothing draws the glass. It is kept only to show the ray coordinates are present.</p>
-  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
-    <figcaption>Ray paths in the plane of the system: galvo at the left, down through the relay lenses and scan lens to the image plane.</figcaption></figure>
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <p>Drawn by this repository from Optiland's surface positions, sags and ray coordinates (Optiland's own <code>draw</code> fails on folds, issue 9). Glass is filled between surfaces, thick black lines are mirrors, the brown arrow-line is the ideal objective and the dashed line is the image plane. Everything is projected onto the plane of the folds.</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Galvo at the top, relay and scan-lens groups, a fold, then the image plane. No Zemax layout was supplied for this file, so it is checked against the element order in the ZMX only.</figcaption></figure>
 
   <details style="border-color:var(--rule)">
     <summary style="color:var(--ink)">Show Optiland's own 3D viewer (incomplete for this system)</summary>

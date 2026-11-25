@@ -9,6 +9,6 @@ Our best attempt to make Optiland (0.6.3) reproduce what Zemax stores for `../co
 | `figs/relative_illumination.png` | Zemax relative illumination (digitised) against the Optiland pupil fraction |
 | `model.glb` | 3D model (glTF binary) for the page's interactive viewer |
 | `*_utf8.zmx` | UTF-8 copy of the Zemax file as Optiland reads it (tilted surfaces expanded to coordinate breaks) |
-| `figs/layout_rays.png` | Ray paths projected onto the plane of the system (our own plot; Optiland's `draw` mangles folds) |
+| `figs/layout.png` | Layout drawn by `draw_layout.py` from Optiland geometry: glass, mirrors, rays (Optiland's `draw` mangles folds) |
 | `figs/layout_3d.png` | Render from Optiland's VTK 3D viewer |
 | `figs/spots.png`, `figs/rms_spot.png` | Spot diagrams and RMS spot radius |

@@ -15,11 +15,6 @@
  "viewer": false,
  "not_working": [
   {
-   "what": "System layout drawing.",
-   "detail": "The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only.",
-   "cause": "our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9)."
-  },
-  {
    "what": "Wavefront, PSF, Strehl and FWHM.",
    "detail": "Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared.",
    "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."

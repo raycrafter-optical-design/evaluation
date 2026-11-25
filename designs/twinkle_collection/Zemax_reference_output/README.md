@@ -5,6 +5,7 @@ From the TWINKLE authors' repository (https://github.com/BrainCOGS/Microscope/tr
 | File | What it is |
 |---|---|
 | `RelativeIllumination.svg/png` | Zemax relative illumination against Y field, 0 to 12 degrees, 0.546 µm |
+| `collection_vector.eps/png` | Zemax layout of the collection optics (3D, vector); the png is a render |
 | `zemax_digitised.json` | The 21 points of the curve, read from the vertices of the SVG. **Digitised, not Zemax numeric output** (calibration to about 0.002) |
 
 The file also stores a semi-diameter for each surface whose semi-diameter is automatic; the verdict table uses those (see the page).

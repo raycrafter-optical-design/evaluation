@@ -18,11 +18,6 @@
  "viewer": true,
  "not_working": [
   {
-   "what": "System layout drawing.",
-   "detail": "The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only.",
-   "cause": "our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9)."
-  },
-  {
    "what": "Wavefront, PSF, Strehl and FWHM.",
    "detail": "Works on axis only (Strehl 0.998); blocked for the tilted configurations.",
    "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."

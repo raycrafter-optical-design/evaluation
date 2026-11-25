@@ -32,7 +32,7 @@
       <tr><td>RMS spot vs field</td><td><span class="chip ok">Works</span></td><td>Geometric. This is a non-imaging system, so no Airy comparison.</td></tr>
       <tr><td>EFL</td><td><span class="chip ok">Works</span></td><td>2297 mm. Not a meaningful figure for a collector, and there is no Zemax value to compare.</td></tr>
       <tr><td>Strehl, wavefront</td><td><span class="chip warn">Not meaningful</span></td><td>Runs, but the design does not form a sharp image (Strehl 0.003); the detector is meant to collect, not resolve.</td></tr>
-      <tr><td>System layout drawing</td><td><span class="chip bad">Not working</span></td><td>No lenses; unreliable projection. See the top of the page.</td></tr>
+      <tr><td>System layout drawing</td><td><span class="chip ok">Works</span></td><td>Own drawing from Optiland geometry; see the layout section for what it was checked against.</td></tr>
       <tr><td>Optiland 3D viewer</td><td><span class="chip warn">Unverified</span></td><td>Looks plausible, but not checked against the Zemax layout.</td></tr>
     </tbody>
   </table>
@@ -40,10 +40,11 @@
 </section>
 
 <section id="layout">
-  <div class="title-row"><h2>System layout</h2><span class="chip bad">Not working</span></div>
-  <p><strong>This drawing is not a reliable picture of the system.</strong> It has no lenses, and rays are projected onto a single best-fit plane, which distorts systems that fold in more than one plane. Rays kink at every refracting surface because nothing draws the glass. It is kept only to show the ray coordinates are present.</p>
-  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
-    <figcaption>Ray paths for the extreme and central fields, projected onto the plane of the fold. Black squares are the two mirrors.</figcaption></figure>
+  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <p>Drawn by this repository from Optiland's surface positions, sags and ray coordinates (Optiland's own <code>draw</code> fails on folds, issue 9). Glass is filled between surfaces, thick black lines are mirrors, the brown arrow-line is the ideal objective and the dashed line is the image plane. Everything is projected onto the plane of the folds.</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout.png" alt="Ray paths projected onto the plane of the system"></div>
+    <figcaption>Optiland geometry, rays for the extreme and central fields, projected onto the plane of the folds.</figcaption></figure>
+  <figure><div class="plate"><img src="../Zemax_reference_output/collection_vector.png" alt="Zemax layout of the collection optics"></div><figcaption>Zemax's own layout (<code>collection_vector.eps</code>, rendered). Same element order as the drawing above: stop, 45° fold mirror, two achromat pairs, dichroic mirror, filter, condenser, detector. Checked by eye; we did not compare coordinates.</figcaption></figure>
 
   <h3>Interactive 3D</h3>
   <div id="viewer" aria-label="3D model of the optical system">
