@@ -82,6 +82,22 @@ def lens_rows_html(results: dict) -> str:
     return "\n".join(lines)
 
 
+def not_working_html(design: dict) -> str:
+    """Prominent box at the top of the page listing what does not work, from design.json."""
+    items = design.get("not_working", [])
+    if not items:
+        return ""
+    lis = "".join(
+        f"<li><b>{item['what']}</b> {item['detail']} <i>Cause: {item['cause']}</i></li>"
+        for item in items
+    )
+    return (
+        '<section id="not-working" style="padding-block:1.4rem .4rem;border-bottom:0">'
+        '<div class="callout"><strong class="h">Not working on this page</strong>'
+        f"<ul>{lis}</ul></div></section>"
+    )
+
+
 def navigation_html(body: str) -> str:
     """Contents rail built from the ``<section id=...><h2>`` pairs in the page body."""
     items = []
@@ -130,6 +146,7 @@ def build_design(design_dir: Path) -> dict:
         .replace("@@LEDE@@", design["lede"])
         .replace("@@META@@", meta_html(design, results))
         .replace("@@NAV@@", navigation_html(body))
+        .replace("@@NOT_WORKING@@", not_working_html(design))
         .replace("@@BODY@@", body)
     )
     if 'id="viewer"' not in body:  # drop the 3D viewer script when the page has no viewer

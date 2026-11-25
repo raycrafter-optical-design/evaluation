@@ -36,14 +36,15 @@
       <tr><td>Chief-ray position vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Linear scan, see below.</td></tr>
       <tr><td>EFL, first-order data</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilts (issue 8).</td></tr>
       <tr><td>RMS wavefront, Strehl, PSF, FWHM, field curvature</td><td><span class="chip bad">Blocked</span></td><td>Same cause. This is what Zemax's reference plots show.</td></tr>
-      <tr><td>3D viewer of the model</td><td><span class="chip warn">Partial</span></td><td>Shows one leg of the path (issue 10). Projected 2D layout works.</td></tr>
+      <tr><td>System layout drawing and 3D viewer</td><td><span class="chip bad">Not working</span></td><td>Shows one leg of the path (issue 10). Projected 2D layout works.</td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
 <section id="layout">
-  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <div class="title-row"><h2>System layout</h2><span class="chip bad">Not working</span></div>
+  <p><strong>This drawing is not a reliable picture of the system.</strong> It has no lenses, and rays are projected onto a single best-fit plane, which distorts systems that fold in more than one plane. Rays kink at every refracting surface because nothing draws the glass. It is kept only to show the ray coordinates are present.</p>
   <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
     <figcaption>Ray paths in the plane of the system, from Optiland's global ray coordinates: source and galvo at top left, relay and scan lens down to the first fold, the long leg to the second fold, then tube lens and the objective at top right. Three galvo angles (−10°, 0°, +10°) are drawn.</figcaption></figure>
 

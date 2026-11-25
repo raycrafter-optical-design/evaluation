@@ -45,9 +45,9 @@ import ZOSAPI.*;
             TheSystem.LoadFile(testFile,false);
             TheSystem.LDE.GetSurfaceAt(3).GetCellAt(14).DoubleValue =  angle;
             TheSystem.LDE.GetSurfaceAt(5).GetCellAt(14).DoubleValue = -angle;
-            
+
             TheSystem.LDE.GetSurfaceAt(38).Thickness = 0.007 + z;
-    
+
             testFile2 = System.String.Concat('C:\Users\Manuel\Desktop\tmp.zos');
             TheSystem.SaveAs(testFile2);
             try
@@ -65,7 +65,7 @@ import ZOSAPI.*;
         end
         angle_idx = angle_idx + 1;
     end
-    
+
     export = struct;
     export.results          = psf_all;
     export.resolutionDx     = dataGrid.Dx;
@@ -140,5 +140,3 @@ function  CleanupConnection(TheApplication)
 % and store the instance somewhere instead.
 TheApplication.CloseApplication();
 end
-
-

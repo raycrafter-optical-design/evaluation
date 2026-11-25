@@ -15,5 +15,22 @@
  },
  "analysis": "generic",
  "lede": "The tube-lens pair of the TWINKLE excitation path on its own, with a collimated 4.39 mm beam and 6 small galvo configurations. This is the one TWINKLE file where Optiland's wavefront and PSF tools run, because the galvo is at 0° in configuration 1.",
- "viewer": true
+ "viewer": true,
+ "not_working": [
+  {
+   "what": "System layout drawing.",
+   "detail": "The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only.",
+   "cause": "our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9)."
+  },
+  {
+   "what": "Wavefront, PSF, Strehl and FWHM.",
+   "detail": "Works on axis only (Strehl 0.998); blocked for the tilted configurations.",
+   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."
+  },
+  {
+   "what": "Galvo angles and tilted surfaces on import.",
+   "detail": "Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong.",
+   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7)."
+  }
+ ]
 }

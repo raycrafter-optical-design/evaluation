@@ -74,8 +74,16 @@ def test_surface_tilts_become_coordinate_breaks_in_the_right_place():
     _, blocks, _ = split_surfaces(expand_surface_tilts(SYNTHETIC))
     types = [re.search(r"TYPE (\w+)", b).group(1) for b in blocks]
     # mode 1 puts a break before surface 4; mode 2 puts one after surface 5
-    assert types == ["STANDARD", "COORDBRK", "STANDARD", "COORDBRK", "COORDBRK", "STANDARD",
-                     "STANDARD", "COORDBRK"]
+    assert types == [
+        "STANDARD",
+        "COORDBRK",
+        "STANDARD",
+        "COORDBRK",
+        "COORDBRK",
+        "STANDARD",
+        "STANDARD",
+        "COORDBRK",
+    ]
     assert not re.search(r"(?m)^\s+SCBD ", "".join(blocks))  # only the comment mentions it
     assert re.search(r"PARM 2 -0.37", blocks[4]) and re.search(r"PARM 3 45.0", blocks[4])
     # the mode 2 break carries the surface's thickness and the surface itself none

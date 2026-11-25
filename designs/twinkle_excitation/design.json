@@ -12,5 +12,27 @@
  "source": "https://github.com/BrainCOGS/Microscope/tree/b9e40b9a5b3840203f54d78f5532f09e14fbfb07/zemax",
  "analysis": "generic",
  "lede": "The full excitation path of the TWINKLE two-photon microscope in Optiland: a 4.39 mm beam, galvo mirror, relay, scan lens, tube lens, three fold mirrors, a tilted dichroic and an ideal objective. The Zemax file stores 22 galvo angles. Optiland loads only the first until we rewrite the file, and once we do, ray tracing agrees with Zemax to 0.14% on every surface Zemax computed a semi-diameter for. The PSF-based results Zemax gives (FWHM, field curvature) cannot be computed in Optiland at all, because its paraxial engine rejects the tilted galvo.",
- "viewer": false
+ "viewer": false,
+ "not_working": [
+  {
+   "what": "System layout drawing.",
+   "detail": "The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only.",
+   "cause": "our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9)."
+  },
+  {
+   "what": "Wavefront, PSF, Strehl and FWHM.",
+   "detail": "Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared.",
+   "cause": "Optiland's paraxial engine (issue 8; upstream roadmap #865)."
+  },
+  {
+   "what": "Optiland's 3D viewer.",
+   "detail": "Shows only the first leg of the path and misplaces elements.",
+   "cause": "not located (issue 10)."
+  },
+  {
+   "what": "Galvo angles and tilted surfaces on import.",
+   "detail": "Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong.",
+   "cause": "Optiland's Zemax reader silently drops them (issues 5 to 7)."
+  }
+ ]
 }

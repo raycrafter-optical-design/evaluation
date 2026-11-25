@@ -26,7 +26,7 @@ for angle_idx = 1:length(angles)
     FWHM_axial(angle_idx, 1) = angles(angle_idx);
     FWHM_axial(angle_idx, 2) = width;
 
-    % Find FWHM in radial / xy 
+    % Find FWHM in radial / xy
     slice = PSF(:,:,peak_z);
     psfArea = sum( slice(:) >= halfMax );
     width = 2*sqrt(psfArea/3.1415) * export.resolutionDx  ;
@@ -117,7 +117,7 @@ figure(2222),clf;
 
 s = isosurface(PSF, 0.9);
 p = patch(s);
-set(p,'FaceColor', [1.0, 1.0, 0.1]);  
+set(p,'FaceColor', [1.0, 1.0, 0.1]);
 set(p,'FaceAlpha', 1)
 set(p,'EdgeColor','none');
 camlight;
@@ -125,7 +125,7 @@ lighting gouraud;
 
 % s = isosurface(PSF, 0.75);
 % p = patch(s);
-% set(p,'FaceColor', [0.8,0.8,0.2]);  
+% set(p,'FaceColor', [0.8,0.8,0.2]);
 % set(p,'FaceAlpha', 0.4)
 % set(p,'EdgeColor','none');
 % camlight;
@@ -133,7 +133,7 @@ lighting gouraud;
 
 s = isosurface(PSF, 0.25);
 p = patch(s);
-set(p,'FaceColor', [0.0,0.7,0.7]);  
+set(p,'FaceColor', [0.0,0.7,0.7]);
 set(p,'FaceAlpha', 0.2)
 set(p,'EdgeColor','none');
 camlight;
@@ -141,7 +141,7 @@ lighting gouraud;
 
 s = isosurface(PSF, 0.005);
 p = patch(s);
-set(p,'FaceColor', [0.2,0.5,1.0]);  
+set(p,'FaceColor', [0.2,0.5,1.0]);
 set(p,'FaceAlpha', 0.1)
 set(p,'EdgeColor','none');
 camlight;
@@ -162,14 +162,14 @@ plot_idx = 1:2:41;
 
 figure(3),clf;
 for angle_idx = plot_idx
-    
+
     PSF = reshape(export.results(angle_idx,:,:,:),32,32,401).^2;
-    
+
     zProfile = max(max(PSF,[],1),[],2); % max over x and y
     zProfile = zProfile(:);
     [~, peak_z] = max(zProfile);
     XYslice = PSF(:,:,peak_z);
-    
+
     yProfile = max(max(PSF,[],3),[],1); %max over z and x
     [~, peak_y] = max(yProfile);
     XZslice = reshape(PSF(:,peak_y,:),32, 401)';
@@ -185,5 +185,3 @@ for angle_idx = plot_idx
     set(gca,'ytick',[])
 
 end
-
-

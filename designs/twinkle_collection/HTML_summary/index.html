@@ -41,6 +41,8 @@
   </div>
 </header>
 
+<section id="not-working" style="padding-block:1.4rem .4rem;border-bottom:0"><div class="callout"><strong class="h">Not working on this page</strong><ul><li><b>System layout drawing.</b> The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only. <i>Cause: our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9).</i></li><li><b>Zemax apertures on import.</b> Not applied by 0.6.3, so we clip by hand to get relative illumination. Possibly fixed on Optiland main (#928, #931, #1016); not yet re-tested. <i>Cause: Optiland's Zemax reader (issue 11).</i></li></ul></div></section>
+
 <section id="verdict">
   <h2>Zemax check: verdict by quantity</h2>
   <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%. Relative illumination is compared with the Zemax plot (see below).</p>
@@ -54,7 +56,7 @@
     <tr><td>Field angle where relative illumination reaches 0 (deg)<span class="src">Zemax: RelativeIllumination.svg, read from the plot vector data (digitised)</span></td><td class="num">10.71</td><td class="num">10.65</td><td class="num">0.0564</td><td><span class="chip ok">Match</span></td></tr>
     <tr><td>Mean |Zemax RI − Optiland pupil fraction|, 0 to 12° (21 points)<span class="src">Zemax: RelativeIllumination.svg, read from the plot vector data (digitised)</span></td><td class="num">0.00</td><td class="num">0.03</td><td class="num">0.0332</td><td><span class="chip warn">Partial</span></td></tr>
   </tbody></table></div>
-  
+
 </section>
 
 <section id="cmp-ri">
@@ -79,14 +81,16 @@
       <tr><td>RMS spot vs field</td><td><span class="chip ok">Works</span></td><td>Geometric. This is a non-imaging system, so no Airy comparison.</td></tr>
       <tr><td>EFL</td><td><span class="chip ok">Works</span></td><td>2297 mm. Not a meaningful figure for a collector, and there is no Zemax value to compare.</td></tr>
       <tr><td>Strehl, wavefront</td><td><span class="chip warn">Not meaningful</span></td><td>Runs, but the design does not form a sharp image (Strehl 0.003); the detector is meant to collect, not resolve.</td></tr>
-      <tr><td>3D viewer of the model</td><td><span class="chip ok">Works</span></td><td>Complete, with the interactive viewer below.</td></tr>
+      <tr><td>System layout drawing</td><td><span class="chip bad">Not working</span></td><td>No lenses; unreliable projection. See the top of the page.</td></tr>
+      <tr><td>Optiland 3D viewer</td><td><span class="chip warn">Unverified</span></td><td>Looks plausible, but not checked against the Zemax layout.</td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
 <section id="layout">
-  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <div class="title-row"><h2>System layout</h2><span class="chip bad">Not working</span></div>
+  <p><strong>This drawing is not a reliable picture of the system.</strong> It has no lenses, and rays are projected onto a single best-fit plane, which distorts systems that fold in more than one plane. Rays kink at every refracting surface because nothing draws the glass. It is kept only to show the ray coordinates are present.</p>
   <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
     <figcaption>Ray paths for the extreme and central fields, projected onto the plane of the fold. Black squares are the two mirrors.</figcaption></figure>
 
@@ -109,7 +113,7 @@
   <p>Spots at the eight Zemax fields on the last surface. The dashed circle is the 2.5 mm clear aperture Zemax puts on that surface; beyond about 8° the beam no longer fits inside it, which is the relative-illumination roll-off above.</p>
   <div class="pair">
     <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against field"></div><figcaption>Geometric RMS spot radius against the detector aperture radius.</figcaption></figure>
-    
+
   </div>
   <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams"></div><figcaption>Spot diagrams at each field, centred, one scale.</figcaption></figure>
 </section>

@@ -41,6 +41,8 @@
   </div>
 </header>
 
+<section id="not-working" style="padding-block:1.4rem .4rem;border-bottom:0"><div class="callout"><strong class="h">Not working on this page</strong><ul><li><b>System layout drawing.</b> The ray-path plot has no lenses and its projection is unreliable, so it does not show the real layout. Treat it as a debugging aid only. <i>Cause: our own plotting is inadequate (this repo); Optiland's 2D draw also fails on folded systems (issue 9).</i></li><li><b>Wavefront, PSF, Strehl and FWHM.</b> Optiland refuses to compute them on tilted or multi-fold systems, so Zemax's PSF plots cannot be compared. <i>Cause: Optiland's paraxial engine (issue 8; upstream roadmap #865).</i></li><li><b>Optiland's 3D viewer.</b> Shows only the first leg of the path and misplaces elements. <i>Cause: not located (issue 10).</i></li><li><b>Galvo angles and tilted surfaces on import.</b> Only configuration 1 loads and the tilted dichroic is ignored unless our workaround rewrites the file first. Anything loading these files without the workaround is silently wrong. <i>Cause: Optiland's Zemax reader silently drops them (issues 5 to 7).</i></li></ul></div></section>
+
 <section id="verdict">
   <h2>Zemax check: verdict by quantity</h2>
   <p>Zemax stores, for every surface whose semi-diameter is automatic, the largest ray radius it computed. We re-trace the same file in Optiland (all fields and wavelengths, 40-ring hexapolar pupil) and take the largest local ray radius. Those values come from the file itself, so they are exact Zemax output, not read off a plot. Status is computed from the tolerances in <code>comparison.json</code>: match within 0.5%, partial within 5%.</p>
@@ -59,7 +61,7 @@
     <tr><td>Semi-diameter, surface 38 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">0.1461</td><td class="num">0.1461</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
     <tr><td>Semi-diameter, surface 39 (mm)<span class="src">Zemax: DIAM stored in the .ZMX (computed by Zemax)</span></td><td class="num">0.1404</td><td class="num">0.1404</td><td class="num">0.00%</td><td><span class="chip ok">Match</span></td></tr>
   </tbody></table></div>
-  
+
 </section>
 
 <section id="cmp-scan">
@@ -88,14 +90,15 @@
       <tr><td>Chief-ray position vs galvo angle</td><td><span class="chip ok">Works</span></td><td>Linear scan, see below.</td></tr>
       <tr><td>EFL, first-order data</td><td><span class="chip bad">Blocked</span></td><td>Paraxial engine rejects the tilts (issue 8).</td></tr>
       <tr><td>RMS wavefront, Strehl, PSF, FWHM, field curvature</td><td><span class="chip bad">Blocked</span></td><td>Same cause. This is what Zemax's reference plots show.</td></tr>
-      <tr><td>3D viewer of the model</td><td><span class="chip warn">Partial</span></td><td>Shows one leg of the path (issue 10). Projected 2D layout works.</td></tr>
+      <tr><td>System layout drawing and 3D viewer</td><td><span class="chip bad">Not working</span></td><td>Shows one leg of the path (issue 10). Projected 2D layout works.</td></tr>
     </tbody>
   </table>
   </div>
 </section>
 
 <section id="layout">
-  <div class="title-row"><h2>System layout</h2><span class="chip ok">Works</span></div>
+  <div class="title-row"><h2>System layout</h2><span class="chip bad">Not working</span></div>
+  <p><strong>This drawing is not a reliable picture of the system.</strong> It has no lenses, and rays are projected onto a single best-fit plane, which distorts systems that fold in more than one plane. Rays kink at every refracting surface because nothing draws the glass. It is kept only to show the ray coordinates are present.</p>
   <figure><div class="plate"><img src="../optiland_analysis/figs/layout_rays.png" alt="Ray paths projected onto the plane of the system"></div>
     <figcaption>Ray paths in the plane of the system, from Optiland's global ray coordinates: source and galvo at top left, relay and scan lens down to the first fold, the long leg to the second fold, then tube lens and the objective at top right. Three galvo angles (−10°, 0°, +10°) are drawn.</figcaption></figure>
 
