@@ -222,10 +222,6 @@ On the collection optics, `op.draw()` shows rays rising to 45 mm above the axis 
 
 `OpticViewer3D` draws the rays up to the galvo mirror and then stops, and several elements appear in the wrong places. The same viewer is correct for the collection optics and the tube lens. The ray coordinates themselves are right (the projected layout from the same coordinates shows the full path), so the fault seems to be in the viewer. See the excitation page.
 
-## 11. Zemax clear/floating apertures (`CLAP`, `FLAP`) are not applied — CONFIRMED
-
-On the collection optics the 12° field has 0% of its pupil inside Zemax's apertures (Zemax's relative illumination is 0 there), yet Optiland traces all 1801 rays to the image: nothing is clipped. The apertures are not turned into surface apertures on import. Workaround: `analyze_zmx.transmission_vs_field` reads the apertures from the `.ZMX` and counts the rays inside them from the local ray radii. With that, the relative-illumination roll-off matches Zemax to 0.1°.
-
 ## Smaller observations / things that were *not* bugs
 
 - **UTF-16 `.ZMX` files load fine.** I transcoded to UTF-8 preemptively, but `load_zemax_file` reads the original UTF-16 file directly (21 surfaces). The transcode step in `load_system.py` can be removed.
@@ -238,7 +234,7 @@ On the collection optics the 12° field has 0% of its pupil inside Zemax's apert
 
 ## Priority for fixing
 
-(Issues 5 to 11 were added with the TWINKLE designs. For those, 8 matters most: it blocks every PSF-based comparison on tilted systems, and 5 and 7 are silent wrong answers.)
+(Issues 5 to 10 were added with the TWINKLE designs. For those, 8 matters most: it blocks every PSF-based comparison on tilted systems, and 5 and 7 are silent wrong answers.)
 
 1. **Issue 3** (paraxial lens off-axis OPD + telecentric wavefront). This blocks the Strehl and RMS-WFE requirements for any design that uses an ideal objective.
 2. **Issue 1** (thin lens with N < 0). It's small and well understood: a one-function fix plus a test.

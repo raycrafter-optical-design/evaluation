@@ -162,23 +162,17 @@ def spot_data(op, hy: float, wavelength_um: float) -> dict:
     }
 
 
-def transmission_vs_field(op, zemax_surfaces: list[dict], hy_values: list[float]) -> list[float]:
-    """Fraction of pupil rays inside every Zemax clipping aperture, one value per field.
+def transmission_vs_field(op, hy_values: list[float]) -> list[float]:
+    """Fraction of pupil rays that survive Optiland's imported Zemax apertures, per field.
 
-    Zemax clips at CLAP and FLAP apertures. Optiland keeps tracing, so we apply the same
-    circles ourselves in each surface's local frame.
+    Optiland clips by setting a ray's intensity to zero (the ray itself stays finite), so
+    the survivors are the rays with non-zero intensity on the last surface.
     """
     wavelength = op.wavelengths.primary_wavelength.value
     fractions = []
     for hy in hy_values:
-        local = trace_local(op, hy, wavelength, num_rings=40)
-        passes = np.isfinite(local[-1, 0])
-        for index, surface in enumerate(zemax_surfaces):
-            limit = surface["clear_aperture_mm"]
-            if limit is not None and index > 0:
-                with np.errstate(invalid="ignore"):
-                    passes &= np.hypot(local[index, 0], local[index, 1]) <= limit
-        fractions.append(float(np.mean(passes)))
+        op.trace(0.0, hy, wavelength, 40, "hexapolar")
+        fractions.append(float(np.mean(to_np(op.surfaces[-1].intensity) > 0)))
     return fractions
 
 
@@ -509,9 +503,7 @@ def interpolate_crossing(x: list[float], y: list[float], level: float) -> float:
     return x[-1]
 
 
-def relative_illumination_checks(
-    op, zemax_surfaces: list[dict], design_dir: Path, results: dict
-) -> None:
+def relative_illumination_checks(op, design_dir: Path, results: dict) -> None:
     """Compare Optiland's unvignetted pupil fraction with Zemax's relative-illumination plot.
 
     Zemax's curve includes sampling ripple of a few percent and cos-law terms, so we compare
@@ -522,9 +514,9 @@ def relative_illumination_checks(
         return
     curve = digitise_svg.relative_illumination_curve(svg)
     largest = max(abs(a) for a in results["fields_deg"])
-    fractions = transmission_vs_field(op, zemax_surfaces, [a / largest for a in curve["field_deg"]])
+    fractions = transmission_vs_field(op, [a / largest for a in curve["field_deg"]])
     fine = list(np.arange(0, largest + 1e-9, 0.1))
-    fine_fraction = transmission_vs_field(op, zemax_surfaces, [a / largest for a in fine])
+    fine_fraction = transmission_vs_field(op, [a / largest for a in fine])
     zemax_ri = curve["relative_illumination"]
     results["relative_illumination"] = {
         "field_deg": curve["field_deg"],
@@ -631,7 +623,7 @@ def main(design_dir: Path) -> None:
     )
     results["transmission_vs_field"] = {
         "field_deg": angles,
-        "fraction": transmission_vs_field(op, zemax_surfaces, hy_values),
+        "fraction": transmission_vs_field(op, hy_values),
     }
     layout_figure(op, layout_fields(hy_values), results, f"{design['title']}: Optiland ray paths")
 
@@ -643,7 +635,7 @@ def main(design_dir: Path) -> None:
         spots = scan_fields(op, angles, hy_values, primary, reference, results)
     spot_figure(spots, reference, "spots", results, "Optiland spot diagrams, primary wavelength")
 
-    relative_illumination_checks(op, zemax_surfaces, design_dir, results)
+    relative_illumination_checks(op, design_dir, results)
     digitise_scan_curves(design_dir, results)
     try:
         analyze.export_3d(op, results)

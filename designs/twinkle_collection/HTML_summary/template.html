@@ -12,7 +12,7 @@
 
 <section id="cmp-ri">
   <div class="title-row"><h2>Relative illumination</h2><span class="chip ok">Roll-off matches</span><span class="chip warn">Mean offset partial</span></div>
-  <p>Zemax's relative-illumination plot for field 0° to 12° at 0.546 µm. Optiland has no relative-illumination analysis, so we count the fraction of pupil rays that pass inside every clear or floating aperture that Zemax declares (circles at each surface, in its local frame). That ignores the cos-law terms Zemax includes, which are a few per cent here. The Zemax curve ripples by about ±3% from its own sampling, so we compare where the curve falls through 50% and where it reaches zero, plus the mean difference.</p>
+  <p>Zemax's relative-illumination plot for field 0° to 12° at 0.546 µm. Optiland has no relative-illumination analysis, so we count the fraction of pupil rays that survive the apertures it imports from the Zemax file (it clips by zeroing a ray's intensity). That ignores the cos-law terms Zemax includes, which are a few per cent here. The Zemax curve ripples by about ±3% from its own sampling, so we compare where the curve falls through 50% and where it reaches zero, plus the mean difference.</p>
   <div class="pair">
     <figure><div class="plate"><img src="../Zemax_reference_output/RelativeIllumination.png" alt="Zemax relative illumination against field"></div><figcaption>Zemax, as exported.</figcaption></figure>
     <figure><div class="plate"><img src="../optiland_analysis/figs/relative_illumination.png" alt="Zemax relative illumination (digitised) and the Optiland pupil fraction"></div><figcaption>Zemax points (read from the SVG vertices, digitised) and the Optiland pupil fraction.</figcaption></figure>
@@ -28,7 +28,7 @@
     <tbody>
       <tr><td>Load the file (aspheric surface, mirror, 8 fields)</td><td><span class="chip ok">Works</span></td><td>Loads, all 14 surfaces.</td></tr>
       <tr><td>Semi-diameter on automatic surfaces</td><td><span class="chip ok">Works</span></td><td>Both within 0.02%.</td></tr>
-      <tr><td>Clipping by Zemax apertures (relative illumination)</td><td><span class="chip warn">Works, by hand</span></td><td>Optiland does not apply the Zemax <code>CLAP</code>/<code>FLAP</code> apertures on import, so the pupil fraction is counted here from local ray radii.</td></tr>
+      <tr><td>Clipping by Zemax apertures (relative illumination)</td><td><span class="chip ok">Works</span></td><td>Imported as radial apertures; rays outside get zero intensity. Optiland has no relative-illumination analysis, so we count survivors.</td></tr>
       <tr><td>RMS spot vs field</td><td><span class="chip ok">Works</span></td><td>Geometric. This is a non-imaging system, so no Airy comparison.</td></tr>
       <tr><td>EFL</td><td><span class="chip ok">Works</span></td><td>2297 mm. Not a meaningful figure for a collector, and there is no Zemax value to compare.</td></tr>
       <tr><td>Strehl, wavefront</td><td><span class="chip warn">Not meaningful</span></td><td>Runs, but the design does not form a sharp image (Strehl 0.003); the detector is meant to collect, not resolve.</td></tr>
@@ -74,8 +74,7 @@
   <p>Full details are in <code>optiland_issues_found.md</code> (issues 5 to 10 are new with these designs).</p>
   <ul class="issue-list">
     <li><b>9. 2D layout mangles folded systems.</b> This page draws its own projection. <span class="chip warn">Worked around</span></li>
-    <li><b>11. Aperture data not applied.</b> Zemax <code>CLAP</code>/<code>FLAP</code> are not turned into surface apertures on import, so rays are never clipped. <span class="chip warn">Worked around</span></li>
-  </ul>
+      </ul>
 </section>
 
 <section id="semi-diameters">
