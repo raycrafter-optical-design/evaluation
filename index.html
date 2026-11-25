@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Optiland and RayCrafter against Zemax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap" style="grid-template-columns:minmax(0,1fr)">
+<main>
+<header class="top">
+  <p class="eyebrow">RayCrafter evaluation</p>
+  <h1>Optiland and RayCrafter against Zemax</h1>
+  <p class="lede">For each optical design, how closely does the open-source ray tracer
+  <a href="https://github.com/optiland/optiland">Optiland</a>, and the lens-level design tool
+  <a href="https://github.com/raycrafter-optical-design/raycrafter">RayCrafter</a> built on it,
+  reproduce what Zemax OpticStudio gives?</p>
+</header>
+
+<section id="about">
+  <h2>What this is</h2>
+  <p>Each design starts as a Zemax file exported from OpticStudio, together with the plots and numbers
+  Zemax produces for it (the reference). We load the same file into Optiland, run the same analyses,
+  and compare. Every page puts the verdict first (match, partial or fail, computed from stated
+  tolerances), then the evidence: the Zemax output next to ours, then the full Optiland analysis.
+  Problems we find in Optiland are written up in
+  <a href="https://github.com/raycrafter-optical-design/evaluation/blob/main/optiland_issues_found.md">optiland_issues_found.md</a>.</p>
+  <p>The repository is also where RayCrafter is pointed at designs that largely work in Optiland, with
+  the goal that they work in RayCrafter too.</p>
+  <p>Each design folder holds the Zemax export, a <code>Zemax_reference_output/</code> folder (what we
+  must match), an <code>optiland_analysis/</code> folder (our best attempt, with a README listing every
+  file) and the generated page in <code>HTML_summary/</code>.</p>
+</section>
+
+<section id="designs">
+  <h2>Designs</h2>
+  <div class="cards">
+    <div class="card"><h3><a href="designs/SMOD4.5/HTML_summary/index.html">SMOD4.5 scan system</a></h3>
+      <p>Galvo scan system: 4.5 mm beam, 54 mm scan lens, 250 mm tube lens, 45° fold mirror and an ideal 12.5 mm objective.</p>
+      <p>RayCrafter: not yet tried</p>
+      <div class="tally"><div><b style="color:var(--ok)">8</b><span>matching</span></div><div><b style="color:var(--warn)">2</b><span>partial</span></div><div><b style="color:var(--bad)">2</b><span>failing</span></div></div></div>
+  </div>
+  <p style="font-size:13px;color:var(--muted)">The counts are the verdicts from each design's Zemax check.
+  Once several designs are here we will look for common elements and add a traffic-light summary by
+  feature (ray tracing, footprints, spot size, wavefront, distortion, and so on).</p>
+</section>
+
+<footer>Generated 2026-11-25 by <code>evaluation_tools/build_summary.py</code>.
+<a href="https://github.com/raycrafter-optical-design/evaluation">Source on GitHub</a>.</footer>
+</main>
+</div>
+</body>
+</html>

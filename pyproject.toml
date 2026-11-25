@@ -1,0 +1,54 @@
+[project]
+name = "evaluation"
+authors = [{name = "Rob Campbell", email= "git@raacampbell.com"}]
+description = "Evidence on how well Optiland and RayCrafter reproduce Zemax, design by design"
+readme = "README.md"
+requires-python = ">=3.12.0"
+version = "0.1.0"
+
+# Optiland is pinned to the same tested minor version as RayCrafter.
+dependencies = [
+  "optiland>=0.6.3,<0.7",
+  "numpy",
+  "matplotlib",
+  "scipy",
+]
+
+license = "MIT"
+license-files = ["LICENSE"]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pre-commit",
+  "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["evaluation_tools*"]
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    # Optiland 0.6.x still uses parts of its own deprecated API internally.
+    "ignore::DeprecationWarning:optiland.*",
+]
+
+[tool.ruff]
+# The formatter aims for 100 characters; the linter only complains above 120.
+line-length = 100
+exclude = ["__init__.py", "build", ".eggs"]
+lint.select = ["E", "F", "I"]
+fix = true
+
+[tool.ruff.lint.pycodestyle]
+max-line-length = 120
+
+[tool.codespell]
+skip = '.git,*.json,*.zmx,*.ZMX,*.zda,*.ZDA'
+check-hidden = true
+ignore-words-list = 'parm'

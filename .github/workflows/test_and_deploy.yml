@@ -1,0 +1,29 @@
+name: tests
+
+# Lint and unit tests only. Nothing is built or published here: the HTML summaries are
+# generated locally by `evaluation_tools/build_summary.py` and committed, and GitHub Pages
+# serves the repository root.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: neuroinformatics-unit/actions/lint@v2
+
+  test:
+    needs: [linting]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: neuroinformatics-unit/actions/test@v2
+        with:
+          python-version: "3.12"

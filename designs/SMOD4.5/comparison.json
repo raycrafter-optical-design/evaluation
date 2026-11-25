@@ -1,0 +1,192 @@
+{
+ "description": "Rows of the verdict table. Zemax values are literals (read from text blocks) or paths into Zemax_reference_output/zemax_digitised.json; optiland values are paths into optiland_analysis/results.json ('/' separates keys, negative numbers index lists). mode abs: |difference| <= tol is a match, <= partial_tol is partial, else fail. mode ratio: optiland/zemax within 1+-tol is a match, <= partial_tol partial, else fail.",
+ "rows": [
+  {
+   "id": "ba_x",
+   "label": "Back aperture, max |x|, all λ and fields (mm)",
+   "zemax": [
+    10.3417
+   ],
+   "zemax_source": "text block on FootprintDiagram2.png",
+   "optiland": [
+    "results.json:zemax_comparison/back_aperture_x_max_abs_mm"
+   ],
+   "mode": "abs",
+   "tol": 0.0005,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "ba_ymin",
+   "label": "Back aperture, y min (mm)",
+   "zemax": [
+    -11.5586
+   ],
+   "zemax_source": "text block on FootprintDiagram2.png",
+   "optiland": [
+    "results.json:zemax_comparison/back_aperture_y_min_mm"
+   ],
+   "mode": "abs",
+   "tol": 0.0005,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "ba_ymax",
+   "label": "Back aperture, y max (mm)",
+   "zemax": [
+    10.313
+   ],
+   "zemax_source": "text block on FootprintDiagram2.png",
+   "optiland": [
+    "results.json:zemax_comparison/back_aperture_y_max_mm"
+   ],
+   "mode": "abs",
+   "tol": 0.0005,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "img_radius",
+   "label": "Image plane, 10° marginal-ray radius (mm)",
+   "zemax": [
+    0.4736
+   ],
+   "zemax_source": "text block on FootprintDiagram.png",
+   "optiland": [
+    "results.json:zemax_comparison/image_max_radius_primary_mm"
+   ],
+   "mode": "abs",
+   "tol": 0.0005,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "img_x",
+   "label": "Image plane, max |x| of rays (mm)",
+   "zemax": [
+    0.0021
+   ],
+   "zemax_source": "text block on FootprintDiagram.png",
+   "optiland": [
+    "results.json:zemax_comparison/image_x_max_abs_primary_mm"
+   ],
+   "mode": "abs",
+   "tol": 0.0005,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "field_5",
+   "label": "Image plane, field 5° position (mm)",
+   "zemax": [
+    0.238
+   ],
+   "zemax_source": "marker pixels on FootprintDiagram.png (digitised, scale 0.0021 mm/px)",
+   "optiland": [
+    "results.json:zemax_comparison/image_chief_height_mm/5.0"
+   ],
+   "mode": "abs",
+   "tol": 0.002,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "field_65",
+   "label": "Image plane, field 6.5° position (mm)",
+   "zemax": [
+    0.31
+   ],
+   "zemax_source": "marker pixels on FootprintDiagram.png (digitised, scale 0.0021 mm/px)",
+   "optiland": [
+    "results.json:zemax_comparison/image_chief_height_mm/6.5"
+   ],
+   "mode": "abs",
+   "tol": 0.002,
+   "partial_tol": 0.01,
+   "decimals": 4
+  },
+  {
+   "id": "layout",
+   "label": "3D layout: element order, fold, objective",
+   "status": "match",
+   "note": "Compared by eye: same element order, fold and objective. See the layouts below."
+  },
+  {
+   "id": "wfe_axis",
+   "label": "RMS wavefront on axis, 0.85 / 0.94 / 1.10 µm (waves)",
+   "zemax_path": [
+    "zemax_digitised.json:rms_wfe_waves/0.85/0",
+    "zemax_digitised.json:rms_wfe_waves/0.94/0",
+    "zemax_digitised.json:rms_wfe_waves/1.1/0"
+   ],
+   "zemax_source": "digitised from RMSvsField2.png",
+   "optiland": [
+    "results.json:rms/wfe_waves/0.85/0",
+    "results.json:rms/wfe_waves/0.94/0",
+    "results.json:rms/wfe_waves/1.1/0"
+   ],
+   "mode": "ratio",
+   "tol": 0.1,
+   "partial_tol": 5,
+   "decimals": 3
+  },
+  {
+   "id": "strehl_axis",
+   "label": "Strehl on axis, 0.85 / 0.94 / 1.10 µm",
+   "zemax_path": [
+    "zemax_digitised.json:strehl/0.85/0",
+    "zemax_digitised.json:strehl/0.94/0",
+    "zemax_digitised.json:strehl/1.1/0"
+   ],
+   "zemax_source": "digitised from RMSvsField.png",
+   "optiland": [
+    "results.json:strehl/fft/0.85/0",
+    "results.json:strehl/fft/0.94/0",
+    "results.json:strehl/fft/1.1/0"
+   ],
+   "mode": "abs",
+   "tol": 0.01,
+   "partial_tol": 0.2,
+   "decimals": 2
+  },
+  {
+   "id": "wfe_10",
+   "label": "RMS wavefront at 10°, 0.85 / 0.94 / 1.10 µm (waves)",
+   "zemax_path": [
+    "zemax_digitised.json:rms_wfe_waves/0.85/-1",
+    "zemax_digitised.json:rms_wfe_waves/0.94/-1",
+    "zemax_digitised.json:rms_wfe_waves/1.1/-1"
+   ],
+   "zemax_source": "digitised from RMSvsField2.png",
+   "optiland": [
+    "results.json:rms/wfe_waves/0.85/-1",
+    "results.json:rms/wfe_waves/0.94/-1",
+    "results.json:rms/wfe_waves/1.1/-1"
+   ],
+   "mode": "ratio",
+   "tol": 0.1,
+   "partial_tol": 5,
+   "decimals": 3
+  },
+  {
+   "id": "strehl_10",
+   "label": "Strehl at 10°, 0.85 / 0.94 / 1.10 µm",
+   "zemax_path": [
+    "zemax_digitised.json:strehl/0.85/-1",
+    "zemax_digitised.json:strehl/0.94/-1",
+    "zemax_digitised.json:strehl/1.1/-1"
+   ],
+   "zemax_source": "digitised from RMSvsField.png",
+   "optiland": [
+    "results.json:strehl/fft/0.85/-1",
+    "results.json:strehl/fft/0.94/-1",
+    "results.json:strehl/fft/1.1/-1"
+   ],
+   "mode": "abs",
+   "tol": 0.01,
+   "partial_tol": 0.2,
+   "decimals": 3
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+{
+ "name": "SMOD4.5",
+ "title": "SMOD4.5 scan system",
+ "summary": "Galvo scan system: 4.5 mm beam, 54 mm scan lens, 250 mm tube lens, 45° fold mirror and an ideal 12.5 mm objective.",
+ "zmx": "20260930 SMOD4.5_54SL_250TL.ZMX",
+ "zemax_version": "OpticStudio 2026 R1",
+ "optiland_version": "0.6.3",
+ "wavelengths_um": [
+  0.85,
+  0.94,
+  1.1
+ ],
+ "fields_deg": [
+  0,
+  5,
+  6.5,
+  7,
+  10
+ ],
+ "raycrafter": "not yet tried"
+}

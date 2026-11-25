@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SMOD4.5 against Zemax</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../../../style.css">
+</head>
+<body>
+<div class="wrap">
+<nav class="rail" aria-label="Contents">
+  <p><a href="../../../index.html">All designs</a></p>
+  <ol>
+    <li><a href="#verdict"><span class="dot" style="background:var(--accent)"></span>Zemax check</a></li>
+    <li><a href="#cmp-strehl"><span class="dot" style="background:var(--bad)"></span>Strehl vs field</a></li>
+    <li><a href="#cmp-wfe"><span class="dot" style="background:var(--bad)"></span>RMS wavefront</a></li>
+    <li><a href="#cmp-ba"><span class="dot" style="background:var(--ok)"></span>Back-aperture footprint</a></li>
+    <li><a href="#cmp-img"><span class="dot" style="background:var(--ok)"></span>Focal-plane footprint</a></li>
+    <li><a href="#cmp-layout"><span class="dot" style="background:var(--ok)"></span>3D layout</a></li>
+    <li><a href="#summary"><span class="dot" style="background:var(--muted)"></span>Optiland detail</a></li>
+    <li><a href="#layout">System &amp; 3D</a></li>
+    <li><a href="#back-aperture">Back aperture</a></li>
+    <li><a href="#fov">Field of view</a></li>
+    <li><a href="#rms">RMS vs field</a></li>
+    <li><a href="#strehl">Strehl vs field</a></li>
+    <li><a href="#curvature">Curvature &amp; distortion</a></li>
+    <li><a href="#grid">Grid distortion</a></li>
+    <li><a href="#lens-data">Lens data</a></li>
+    <li><a href="#issues">Optiland issues</a></li>
+    <li><a href="#reproduce">Reproduce</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <p class="eyebrow">Optiland vs Zemax</p>
+  <h1>SMOD4.5: Optiland against Zemax</h1>
+  <p class="lede">Plots exported from Zemax OpticStudio 2026 R1 for <code>20260930 SMOD4.5_54SL_250TL.ZMX</code> set against the Optiland results: a 4.5&nbsp;mm galvo beam, a 54&nbsp;mm scan lens, a 250&nbsp;mm tube lens, a 45° fold mirror and an ideal 12.5&nbsp;mm objective. Every ray-based quantity agrees to four digits. The wavefront-based quantities, RMS wavefront error and Strehl ratio, do not.</p>
+  <div class="meta">
+    <span>optiland <b>0.6.3</b></span>
+    <span>λ <b>0.85 (primary), 0.94, 1.10 µm</b></span>
+    <span>scan <b>0–10° (Zemax fields 0, 5, 6.5, 7, 10°)</b></span>
+    <span>run <b>2026-11-25</b></span>
+  </div>
+</header>
+
+<section id="verdict">
+  <h2>Zemax check: verdict by quantity</h2>
+  <p>Zemax numbers are read from the text block on each plot where it prints one; the rest are read off the plot pixels (digitised, marked in the Source column). Optiland numbers come from re-tracing the same ZMX with the local thin-lens patch (<code>optiland_analysis/results.json</code>), at 0.85 µm unless stated. Status is computed from the tolerances in <code>comparison.json</code>.</p>
+  <div class="tally"><div><b style="color:var(--ok)">8</b><span>matching</span></div><div><b style="color:var(--warn)">2</b><span>partial</span></div><div><b style="color:var(--bad)">2</b><span>failing</span></div></div>
+  <div class="scroll"><table>
+  <thead><tr><th>Quantity</th><th class="num">Zemax</th><th class="num">Optiland</th><th class="num">Difference</th><th>Result</th></tr></thead>
+  <tbody>
+    <tr><td>Back aperture, max |x|, all λ and fields (mm)<span class="src">Zemax: text block on FootprintDiagram2.png</span></td><td class="num">10.3417</td><td class="num">10.3417</td><td class="num"><0.0001</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Back aperture, y min (mm)<span class="src">Zemax: text block on FootprintDiagram2.png</span></td><td class="num">−11.5586</td><td class="num">−11.5586</td><td class="num"><0.0001</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Back aperture, y max (mm)<span class="src">Zemax: text block on FootprintDiagram2.png</span></td><td class="num">10.3130</td><td class="num">10.3130</td><td class="num"><0.0001</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Image plane, 10° marginal-ray radius (mm)<span class="src">Zemax: text block on FootprintDiagram.png</span></td><td class="num">0.4736</td><td class="num">0.4736</td><td class="num"><0.0001</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Image plane, max |x| of rays (mm)<span class="src">Zemax: text block on FootprintDiagram.png</span></td><td class="num">0.0021</td><td class="num">0.0021</td><td class="num"><0.0001</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Image plane, field 5° position (mm)<span class="src">Zemax: marker pixels on FootprintDiagram.png (digitised, scale 0.0021 mm/px)</span></td><td class="num">0.2380</td><td class="num">0.2378</td><td class="num">0.0002</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>Image plane, field 6.5° position (mm)<span class="src">Zemax: marker pixels on FootprintDiagram.png (digitised, scale 0.0021 mm/px)</span></td><td class="num">0.3100</td><td class="num">0.3087</td><td class="num">0.0013</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>3D layout: element order, fold, objective</td><td class="num">see below</td><td class="num">see below</td><td class="num">—</td><td><span class="chip ok">Match</span></td></tr>
+    <tr><td>RMS wavefront on axis, 0.85 / 0.94 / 1.10 µm (waves)<span class="src">Zemax: digitised from RMSvsField2.png</span></td><td class="num">0.009 / 0.027 / 0.072</td><td class="num">0.026 / 0.086 / 0.225</td><td class="num">about 3×</td><td><span class="chip warn">Partial</span></td></tr>
+    <tr><td>Strehl on axis, 0.85 / 0.94 / 1.10 µm<span class="src">Zemax: digitised from RMSvsField.png</span></td><td class="num">1.00 / 0.98 / 0.82</td><td class="num">0.97 / 0.94 / 0.65</td><td class="num">0.1759</td><td><span class="chip warn">Partial</span></td></tr>
+    <tr><td>RMS wavefront at 10°, 0.85 / 0.94 / 1.10 µm (waves)<span class="src">Zemax: digitised from RMSvsField2.png</span></td><td class="num">0.181 / 0.145 / 0.087</td><td class="num">43.834 / 39.195 / 32.988</td><td class="num">380×</td><td><span class="chip bad">Fail</span></td></tr>
+    <tr><td>Strehl at 10°, 0.85 / 0.94 / 1.10 µm<span class="src">Zemax: digitised from RMSvsField.png</span></td><td class="num">0.282 / 0.447 / 0.751</td><td class="num">0.002 / 0.001 / 0.001</td><td class="num">0.7494</td><td><span class="chip bad">Fail</span></td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="cmp-strehl">
+  <div class="title-row"><h2>Strehl ratio vs field</h2><span class="chip bad">Fail off axis</span></div>
+  <p>Solid lines are Zemax (digitised from <code>RMSvsField.png</code>). Circles are Optiland's FFT PSF Strehl at 0° to 10° in 1° steps. Zemax stays above the 0.8 diffraction limit out to about 6.0° at 0.85 µm, 7.3° at 0.94 µm and 9.4° at 1.10 µm. Optiland has collapsed to 0.02 by 1°.</p>
+  <div class="chart"><div class="legend" id="leg1"></div><svg id="c1" viewBox="0 0 760 360" role="img" aria-label="Strehl ratio versus field angle, Zemax curves against Optiland points"></svg></div>
+  <div class="callout warn"><p><strong>Even on axis the two disagree.</strong> At 1.10 µm Zemax gives 0.82 and Optiland 0.65. At 0.85 and 0.94 µm Optiland is 0.03 low.</p></div>
+  <figure><div class="plate"><img src="../Zemax_reference_output/RMSvsField.png" alt="Zemax Strehl ratio vs field"></div><figcaption>The Zemax plot the curves above were digitised from.</figcaption></figure>
+</section>
+
+<section id="cmp-wfe">
+  <div class="title-row"><h2>RMS wavefront error vs field</h2><span class="chip bad">Fail off axis</span></div>
+  <p>Log scale, because the two sets differ by two to three orders of magnitude. Zemax stays between 0.01 and 0.18 waves. Optiland rises to 33 to 44 waves, the ideal-lens artefact documented as issue 3.</p>
+  <div class="chart"><div class="legend" id="leg2"></div><svg id="c2" viewBox="0 0 760 360" role="img" aria-label="RMS wavefront error versus field angle on a log axis"></svg></div>
+  <p><strong>Zemax is self-consistent.</strong> Its Strehl and wavefront plots agree through the Maréchal relation: 0.18 waves gives exp(−(2π·0.18)²) = 0.28, the Zemax Strehl at 10° and 0.85 µm. So the Zemax plots are a usable target for a fix.</p>
+  <p><strong>To check after a fix:</strong> the 1.10 µm Zemax curve dips to 0.05 waves near 6.5° and then rises, while Optiland's geometric spot for 1.10 µm is the largest of the three at every angle. Only a valid wavefront calculation will show whether those fit together.</p>
+  <figure><div class="plate"><img src="../Zemax_reference_output/RMSvsField2.png" alt="Zemax RMS wavefront vs field"></div><figcaption>The Zemax plot the curves above were digitised from.</figcaption></figure>
+</section>
+
+<section id="cmp-ba">
+  <div class="title-row"><h2>Back-aperture footprint</h2><span class="chip ok">Match</span></div>
+  <p>Zemax prints the extreme ray coordinates for all wavelengths and the five fields. Optiland's numbers, from the same 60-ring hexapolar trace, reproduce all three to the fourth decimal. The beam overfills the 20 mm aperture in both, and the walk is toward −y in both.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../Zemax_reference_output/FootprintDiagram2.png" alt="Zemax footprint diagram on the back aperture, surface 21"></div><figcaption>Zemax, surface 21: x ±10.3417, y −11.5586 to +10.3130.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/ba_footprint.png" alt="Optiland footprint outlines on the back aperture for three wavelengths"></div><figcaption>Optiland outlines per wavelength (seven scan angles).</figcaption></figure>
+  </div>
+</section>
+
+<section id="cmp-img">
+  <div class="title-row"><h2>Footprint in the focal plane</h2><span class="chip ok">Match</span></div>
+  <p>Zemax reports a maximum radius of 0.4736 mm and a ray x spread of ±0.0021 mm at 0.85 µm. Optiland's 10° marginal ray lands at 0.47362 mm and its x spread is ±0.00208 mm. The 10° chief ray is 0.4729 mm, so the chief-ray value in the detail section agrees with Zemax once marginal rays are included.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../Zemax_reference_output/FootprintDiagram.png" alt="Zemax footprint diagram at the image surface"></div><figcaption>Zemax, surface 22, fields 0, 5, 6.5, 7 and 10°.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Optiland spot diagrams at five fields"></div><figcaption>Optiland spot diagrams, same five fields.</figcaption></figure>
+  </div>
+</section>
+
+<section id="cmp-layout">
+  <div class="title-row"><h2>3D layout</h2><span class="chip ok">Match</span></div>
+  <p>Same element order in both: galvo, scan lens doublet and singlet, PBS cube, tube lens doublets, 45° fold mirror, then the objective and focus. The fold direction in the two drawings differs only because of view orientation.</p>
+  <div class="pair">
+    <figure><div class="plate"><img src="../Zemax_reference_output/3DLayout.png" alt="Zemax 3D layout"></div><figcaption>Zemax 3D layout.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/layout_yz.png" alt="Optiland YZ layout"></div><figcaption>Optiland layout.</figcaption></figure>
+  </div>
+</section>
+
+<section id="summary">
+  <h2>Optiland detail: summary</h2>
+  <p>Seven of the nine requirements produced usable output. Two needed a workaround for an optiland bug. <strong>Strehl ratio vs field and RMS wavefront vs field are blocked:</strong> optiland returns numbers for them, but the off-axis values are wrong (see <a href="#strehl">Strehl</a>). STEP export is not available in optiland.</p>
+
+  <div class="scroll">
+  <table class="status-table">
+    <thead><tr><th>Requirement</th><th>Status</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td><a href="#back-aperture">Back-aperture footprint &amp; conjugation, all λ</a></td><td><span class="chip warn">Works, patched</span></td><td>Needed a local fix to optiland's ideal-lens model after the fold mirror.</td></tr>
+      <tr><td><a href="#fov">Field of view, footprint in focal plane</a></td><td><span class="chip warn">Works, patched</span></td><td>Same fix. Without it the image height is 2.7 mm instead of 0.47 mm.</td></tr>
+      <tr><td><a href="#rms">RMS spot vs field vs diffraction limit, all λ</a></td><td><span class="chip ok">Works</span></td><td>Geometric RMS spot radius against the Airy radius.</td></tr>
+      <tr><td><a href="#rms">RMS wavefront vs field</a></td><td><span class="chip bad">Blocked</span></td><td>Valid on axis only. Off-axis values are an artefact.</td></tr>
+      <tr><td><a href="#strehl">Strehl ratio vs field, all λ</a></td><td><span class="chip bad">Blocked</span></td><td>Valid on axis only. Same cause as RMS wavefront.</td></tr>
+      <tr><td><a href="#curvature">Field curvature &amp; distortion</a></td><td><span class="chip warn">Works, unfolded</span></td><td>Run on an unfolded copy of the system. The folded file gives wrong reference heights.</td></tr>
+      <tr><td><a href="#grid">Grid distortion</a></td><td><span class="chip warn">Works, unfolded</span></td><td>Crashes on the folded file; runs on the unfolded copy.</td></tr>
+      <tr><td><a href="#layout">3D viewer of the model</a></td><td><span class="chip ok">Works</span></td><td>optiland's viewer is a desktop VTK window; exported to glTF for this page.</td></tr>
+      <tr><td><a href="#step">STEP export</a></td><td><span class="chip">Not available</span></td><td>optiland has no CAD export. Not attempted (listed as "eventually").</td></tr>
+      <tr><td><a href="#lens-data">Lens and spacing details</a></td><td><span class="chip ok">Works</span></td><td>Surface comments are dropped on import; re-attached from the .ZMX.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="findings">
+    <div class="finding"><div class="v">946 <small>× 946 µm</small></div><div class="k">Scanned field at the focal plane for ±10° in x and y (0.85 µm)</div></div>
+    <div class="finding"><div class="v">0.636</div><div class="k">Image-space NA (real marginal ray), EFL 2.73 mm</div></div>
+    <div class="finding"><div class="v">1.14 <small>mm</small></div><div class="k">Beam walk on the back aperture at 10° scan (0.85 µm)</div></div>
+    <div class="finding"><div class="v">6.8°</div><div class="k">Scan angle where RMS spot passes the Airy radius (0.85 µm)</div></div>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="title-row"><h2>System layout and 3D model</h2><span class="chip ok">Works</span></div>
+  <p class="req">Requirement: 3D viewer of the model</p>
+  <p>The import kept all 21 surfaces: the coordinate breaks, the 45° mirror, the PBS cube and the paraxial objective. Thicknesses, radii, glasses, fields and wavelengths match the Zemax file.</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/layout_yz.png" alt="2D layout of the scan system in the YZ plane showing the scan lens, PBS cube, tube lens, fold mirror and objective, with rays for five scan angles"></div>
+    <figcaption>optiland's 2D layout (YZ plane), five scan angles at 0.85 µm. The beam goes up at the fold mirror at z ≈ 493 mm, into the objective and to focus at y ≈ 168 mm.</figcaption></figure>
+
+  <h3>Interactive 3D</h3>
+  <div id="viewer" aria-label="3D model of the optical system">
+    <img src="../optiland_analysis/figs/layout_3d.png" alt="Static 3D render of the optical system from optiland's VTK viewer" id="viewer-fallback">
+    <span class="hint" id="viewer-hint">Loading 3D model…</span>
+  </div>
+  <div class="viewer-bar">
+    <button type="button" id="view-iso">Isometric</button>
+    <button type="button" id="view-side">Side (YZ)</button>
+    <button type="button" id="view-top">Top (XZ)</button>
+  </div>
+  <p class="prose" style="font-size:13px;color:var(--muted)">This is the scene from optiland's own VTK 3D viewer: all fields, all wavelengths, ring of 12 rays. It was rendered offscreen and exported as glTF; lens meshes were reduced to 3% of their vertices to keep the file at a few MB. Drag to rotate, scroll to zoom, right-drag to pan.</p>
+</section>
+
+<section id="back-aperture">
+  <div class="title-row"><h2>Back-aperture footprint and conjugation</h2><span class="chip warn">Works, patched</span></div>
+  <p class="req">Requirement: footprint of the back aperture, check conjugation, all wavelengths</p>
+  <p>Rays from a filled 4.5 mm pupil at the galvo, traced to the objective's back aperture (Zemax surface 21) for scan angles from −10° to +10°. If the galvo were imaged exactly onto the back aperture, every footprint would be centred and the beam would not walk.</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/ba_footprint.png" alt="Three panels, one per wavelength, showing outlines of the beam footprint on the back aperture for seven scan angles, against a 20 mm dashed circle"></div>
+    <figcaption>Footprint outlines for seven scan angles, per wavelength. The dashed circle is the 20 mm back aperture from the Zemax file (<code>DIAM 10</code>). Neither Zemax nor optiland clips the beam here, because no aperture is set on that surface.</figcaption></figure>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/ba_conjugation.png" alt="Left: footprint centroid shift on the back aperture against scan angle for three wavelengths, reaching about 1.1 mm at 10 degrees. Right: axial position where chief rays cross the axis, 4 to 30 mm before the back aperture"></div>
+    <figcaption>Left: footprint centroid shift against scan angle. Right: where the chief ray crosses the optical axis, measured from the back aperture. Negative values are on the galvo side.</figcaption></figure>
+  <ul>
+    <li><strong>The beam is slightly larger than the back aperture.</strong> On axis the footprint is 20.6 mm across (4.5 mm × 250/54), against a 20 mm aperture.</li>
+    <li><strong>The galvo is not conjugate to the back aperture.</strong> At 10° the footprint moves 1.14 mm at 0.85 µm, 1.04 mm at 0.94 µm and 0.90 mm at 1.10 µm. The walk grows faster than linearly: 0.30 mm at 5°, 1.14 mm at 10° (0.85 µm).</li>
+    <li>The chief rays cross the axis 11 mm before the back aperture at small angles and 30 mm before it at 10° (0.85 µm). So the galvo image lies before the objective, and its position shifts with scan angle and wavelength.</li>
+  </ul>
+</section>
+
+<section id="fov">
+  <div class="title-row"><h2>Field of view at the focal plane</h2><span class="chip warn">Works, patched</span></div>
+  <p class="req">Requirement: field of view size, footprint in the focal plane</p>
+  <p>The Zemax file defines fields along y only. The system is rotationally symmetric up to the fold mirror, which is flat, so here chief rays are traced on an 11 × 11 grid of x and y scan angles over ±10° to show the full 2D scanned field.</p>
+  <figure><div class="plate" style="max-width:560px"><img src="../optiland_analysis/figs/fov.png" alt="Grid of chief-ray landing points in the focal plane, spanning about plus or minus 470 micrometres in x and y, with slightly pulled-in corners"></div>
+    <figcaption>Chief-ray landing positions at 0.85 µm for x and y scan angles from −10° to +10°.</figcaption></figure>
+  <ul>
+    <li>The field is <strong>946 µm × 946 µm</strong>. The edge midpoints sit at ±472.9 µm and the corners at (±464.7, ±464.7) µm, so the corners are pulled in by 1.7%. That is the barrel distortion shown under <a href="#grid">grid distortion</a>.</li>
+    <li>Cross-check: the 10° chief ray lands at 0.4729 mm. The Zemax file's image semi-diameter is 0.4751 mm, which also includes the marginal rays.</li>
+  </ul>
+</section>
+
+<section id="rms">
+  <div class="title-row"><h2>RMS vs field, against the diffraction limit</h2><span class="chip ok">Spot works</span><span class="chip bad">Wavefront blocked</span></div>
+  <p class="req">Requirement: RMS vs field plot, all wavelengths, relative to the diffraction limit</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/rms_spot.png" alt="RMS spot radius against scan angle for three wavelengths, rising from 0.15 to 2 micrometres, with dashed Airy radius lines near 0.8 to 1.06 micrometres"></div>
+    <figcaption>Geometric RMS spot radius (centroid reference, hexapolar sampling with 12 rings) against scan angle. Dashed lines are the Airy radius, 0.61 λ / NA, for each wavelength.</figcaption></figure>
+  <div class="scroll">
+  <table>
+    <thead><tr><th>λ (µm)</th><th class="num">Airy radius (µm)</th><th class="num">RMS spot at 0°</th><th class="num">RMS spot at 10°</th><th class="num">Below Airy up to</th></tr></thead>
+    <tbody>
+      <tr><td>0.85</td><td class="num">0.82</td><td class="num">0.18 µm</td><td class="num">1.52 µm</td><td class="num">6.8°</td></tr>
+      <tr><td>0.94</td><td class="num">0.90</td><td class="num">0.15 µm</td><td class="num">1.35 µm</td><td class="num">8.0°</td></tr>
+      <tr><td>1.10</td><td class="num">1.06</td><td class="num">0.59 µm</td><td class="num">2.00 µm</td><td class="num">5.4°</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div class="callout">
+    <strong class="h">RMS wavefront error vs field is blocked</strong>
+    <p>On axis optiland gives 0.026 waves at 0.85 µm, which is plausible. Off axis the value rises almost linearly, to 44 waves at 10°. That can't be real: a 44-wave wavefront could not produce the 1.5 µm spots above. The cause is in optiland's ideal-lens model, explained under <a href="#strehl">Strehl</a>.</p>
+  </div>
+  <details>
+    <summary>Show optiland's RMS wavefront output (invalid off axis, do not use)</summary>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/rms_wfe.png" alt="Invalid plot: RMS wavefront error rising linearly to about 44 waves at 10 degrees"></div>
+      <figcaption>Kept for reference only. Only the 0° values are meaningful.</figcaption></figure>
+  </details>
+</section>
+
+<section id="strehl">
+  <div class="title-row"><h2>Strehl ratio vs field</h2><span class="chip bad">Blocked</span></div>
+  <p class="req">Requirement: Strehl ratio vs field, all wavelengths, relative to the diffraction limit</p>
+  <div class="callout">
+    <strong class="h">Why this is blocked</strong>
+    <p>The objective in this file is a Zemax <em>paraxial</em> surface: an ideal lens. Zemax treats it as perfect at every field angle. optiland's equivalent thin-lens model adds the optical path of a perfect lens for an on-axis point only. Off axis, the ideal lens itself introduces wavefront error, and at NA 0.64 that error is large.</p>
+    <p>A single ideal lens tested on its own in stock optiland shows this: 1.3 waves RMS and Strehl 0.16 at 5°, where both should be perfect. With the stop at the lens's front focal plane, which is close to this system's layout, the wavefront calculation fails with <code>No valid ray samples found</code>.</p>
+    <p>Every quantity built on the wavefront inherits the error: RMS wavefront, Strehl, PSF and MTF. Ray-based results (spots, footprints, distortion, field curvature) are not affected, because the thin lens bends the rays correctly.</p>
+  </div>
+  <p><strong>What is usable now:</strong> on axis, FFT-PSF Strehl is 0.97 at 0.85 µm, 0.94 at 0.94 µm and 0.65 at 1.10 µm. These agree with the on-axis spot sizes. Off axis there are no valid numbers yet.</p>
+  <p><strong>Ways to unblock:</strong></p>
+  <ul>
+    <li>Fix the thin-lens optical path in optiland (issue 3 in <code>optiland_issues_found.md</code>).</li>
+    <li>Replace the paraxial objective with a real lens prescription.</li>
+    <li>Evaluate the wavefront at the back aperture instead of at the focus.</li>
+  </ul>
+  <details>
+    <summary>Show optiland's Strehl output (invalid off axis, do not use)</summary>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/strehl.png" alt="Invalid plot: Strehl ratio near 1 on axis dropping to near 0 at all off-axis fields"></div>
+      <figcaption>Solid lines: FFT PSF peak. Dotted lines: the Maréchal approximation from the RMS wavefront. Both drop to near zero just off axis. That drop is the ideal-lens artefact, not the design.</figcaption></figure>
+  </details>
+</section>
+
+<section id="curvature">
+  <div class="title-row"><h2>Field curvature and distortion</h2><span class="chip warn">Works, unfolded</span></div>
+  <p class="req">Requirement: field curvature and distortions</p>
+  <p>optiland's paraxial engine gets the reference image height wrong when the system contains the fold mirror: 1.29 mm instead of 0.48 mm at 10°. Distortion depends on that reference. These plots therefore use an unfolded copy of the file, with the flat mirror replaced by straight-through propagation, which is optically identical. Real-ray image heights and back-aperture positions agree between the folded and unfolded models to 10<sup>−14</sup> mm.</p>
+  <div class="two">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/field_curvature.png" alt="Field curvature: tangential and sagittal focus shifts within about plus or minus 2 micrometres for three wavelengths"></div>
+      <figcaption>Field curvature, tangential (solid) and sagittal (dashed). The x axis is in mm, so ±0.0015 mm = ±1.5 µm. On axis, the 1.10 µm focus lies 1.2 µm beyond the 0.85 µm focus.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/distortion_ftheta.png" alt="F-theta distortion reaching minus 0.74 percent at 10 degrees, the same for all wavelengths"></div>
+      <figcaption>Distortion relative to an f-θ scan (image height proportional to scan angle): −0.74% at 10°, the same at every wavelength.</figcaption></figure>
+  </div>
+  <details style="border-color:var(--rule)">
+    <summary style="color:var(--ink)">Show f-tan(θ) distortion</summary>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/distortion_ftan.png" alt="F-tan theta distortion against scan angle for three wavelengths"></div>
+      <figcaption>Distortion relative to f·tan θ, the convention Zemax uses by default.</figcaption></figure>
+  </details>
+</section>
+
+<section id="grid">
+  <div class="title-row"><h2>Grid distortion</h2><span class="chip warn">Works, unfolded</span></div>
+  <p class="req">Requirement: grid distortion</p>
+  <div class="two">
+    <figure><div class="plate"><img src="../optiland_analysis/figs/grid_ftheta.png" alt="Grid distortion against an f-theta reference grid, maximum 1.23 percent"></div>
+      <figcaption>Against an f-θ reference: max 1.23%.</figcaption></figure>
+    <figure><div class="plate"><img src="../optiland_analysis/figs/grid_ftan.png" alt="Grid distortion against an f-tan theta reference grid, maximum 1.73 percent"></div>
+      <figcaption>Against an f-tan θ reference: max 1.73%.</figcaption></figure>
+  </div>
+  <p>optiland scales this grid so the <em>corners</em> are at the 10° maximum field. The grid therefore spans ±0.34 mm, not the ±0.47 mm of the full ±10° x/y scan shown under <a href="#fov">field of view</a>. On the folded file this analysis crashes with <code>zero-size array to reduction operation maximum</code>.</p>
+</section>
+
+<section id="spots">
+  <div class="title-row"><h2>Spot diagrams</h2><span class="chip ok">Works</span></div>
+  <p>Supporting plot: spots at the five Zemax fields, all wavelengths, all centred on the 0.85 µm (primary) chief ray. The dashed circle is the Airy disk at the primary wavelength. Axes are in mm (0.002 mm = 2 µm).</p>
+  <figure><div class="plate"><img src="../optiland_analysis/figs/spots.png" alt="Spot diagrams at five fields for three wavelengths, spots growing from under 1 micrometre on axis to about 5 micrometres across at 10 degrees"></div>
+    <figcaption>Field labels are normalised: Hy = 1 is 10°. The 1.10 µm spots sit below the others, which is lateral colour.</figcaption></figure>
+</section>
+
+<section id="step">
+  <div class="title-row"><h2>STEP export</h2><span class="chip">Not available</span></div>
+  <p>optiland 0.6.3 has no STEP or other CAD export. The closest it offers is the 3D mesh above, which can be exported from VTK as glTF, STL or OBJ: triangulated surfaces with no exact geometry or lens edges. This was listed as "eventually", so nothing more was attempted.</p>
+</section>
+
+<section id="lens-data">
+  <div class="title-row"><h2>Lens data</h2><span class="chip ok">Works</span></div>
+  <p class="req">Requirement: details of the lenses and spacings</p>
+  <p>Prescription as optiland holds it, with Zemax surface numbers and comments added back. optiland drops comments on import and absorbs the two coordinate breaks (Zemax surfaces 17 and 19) into neighbouring surfaces. Negative thicknesses follow the Zemax convention after the mirror. Refractive indices are optiland's, from its own glass catalogue.</p>
+  <div class="scroll">
+  <table>
+    <thead><tr><th class="num">Zemax</th><th>Comment</th><th>Type</th><th class="num">Radius (mm)</th><th class="num">Thickness (mm)</th><th>Material</th><th class="num">n 0.94</th><th class="num">n 0.85</th><th class="num">n 1.10</th></tr></thead>
+    <tbody>
+      <tr><td class="num">0</td><td></td><td>Plane</td><td class="num">∞</td><td class="num">∞</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">1</td><td>X-galvo</td><td>Plane (stop)</td><td class="num">∞</td><td class="num">0</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">2</td><td></td><td>Plane</td><td class="num">∞</td><td class="num">45.5</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">3</td><td></td><td>Standard</td><td class="num">291.07</td><td class="num">5</td><td class="mono">N-SF6HT</td><td class="num">1.77752</td><td class="num">1.78155</td><td class="num">1.77226</td></tr>
+      <tr><td class="num">4</td><td></td><td>Standard</td><td class="num">93.11</td><td class="num">12</td><td class="mono">N-LAK22</td><td class="num">1.63956</td><td class="num">1.64146</td><td class="num">1.63685</td></tr>
+      <tr><td class="num">5</td><td>AC508-075-B</td><td>Standard</td><td class="num">-51.8</td><td class="num">1</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">6</td><td>LE1015-B</td><td>Standard</td><td class="num">65.16</td><td class="num">6.18</td><td class="mono">N-BK7</td><td class="num">1.50837</td><td class="num">1.50984</td><td class="num">1.50617</td></tr>
+      <tr><td class="num">7</td><td></td><td>Standard</td><td class="num">171.6</td><td class="num">68</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">8</td><td>PBS255</td><td>Plane</td><td class="num">∞</td><td class="num">25.4</td><td class="mono">N-SF1</td><td class="num">1.69574</td><td class="num">1.69897</td><td class="num">1.69145</td></tr>
+      <tr><td class="num">9</td><td></td><td>Plane</td><td class="num">∞</td><td class="num">206.5</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">10</td><td></td><td>Standard</td><td class="num">-2471.073</td><td class="num">6</td><td class="mono">N-SF5</td><td class="num">1.65382</td><td class="num">1.65669</td><td class="num">1.64994</td></tr>
+      <tr><td class="num">11</td><td></td><td>Standard</td><td class="num">192.835</td><td class="num">6</td><td class="mono">N-SK2</td><td class="num">1.59679</td><td class="num">1.59851</td><td class="num">1.59434</td></tr>
+      <tr><td class="num">12</td><td>ACT508-500-B</td><td>Standard</td><td class="num">-233.813</td><td class="num">2</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">13</td><td>ACT508-500-B</td><td>Standard</td><td class="num">233.813</td><td class="num">6</td><td class="mono">N-SK2</td><td class="num">1.59679</td><td class="num">1.59851</td><td class="num">1.59434</td></tr>
+      <tr><td class="num">14</td><td></td><td>Standard</td><td class="num">-192.835</td><td class="num">6</td><td class="mono">N-SF5</td><td class="num">1.65382</td><td class="num">1.65669</td><td class="num">1.64994</td></tr>
+      <tr><td class="num">15</td><td></td><td>Standard</td><td class="num">2471.073</td><td class="num">64.5</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">16</td><td>enterance to flip cube</td><td>Plane</td><td class="num">∞</td><td class="num">32.6</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">18</td><td></td><td>Mirror</td><td class="num">∞</td><td class="num">-24.54</td><td class="mono">MIRROR</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">20</td><td>underside of filp cube</td><td>Plane</td><td class="num">∞</td><td class="num">-130.5</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">21</td><td>Back aperture</td><td>Paraxial f=12.5</td><td class="num">∞</td><td class="num">-12.5</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+      <tr><td class="num">22</td><td></td><td>Plane</td><td class="num">∞</td><td class="num">—</td><td class="mono">Air</td><td class="num"></td><td class="num"></td><td class="num"></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p style="font-size:13px;color:var(--muted)">System: entrance pupil 4.5 mm at the galvo (stop). Paraxial EFL 2.73 mm, working F/0.61. Fold mirror tilted 45° about x. Aperture shapes from the file (square aperture on the PBS cube, rectangular on the mirror) are not used in these results; no rays were clipped.</p>
+</section>
+
+<section id="issues">
+  <h2>optiland issues found</h2>
+  <p>Full details, repro code and suggested fixes are in <code>optiland_issues_found.md</code>.</p>
+  <ul class="issue-list">
+    <li><b>1. Ideal lens reverses rays after a mirror.</b> optiland's thin-lens model forces rays to travel in +z. After the fold mirror they travel in −z, so they were sent backwards: 10° landed at 2.7 mm instead of 0.47 mm. <span class="chip warn">Patched locally</span></li>
+    <li><b>2. Paraxial engine is wrong with a fold mirror.</b> The exit pupil and the reference image height are wrong in the folded file, which breaks distortion and grid distortion. <span class="chip warn">Worked around by unfolding</span></li>
+    <li><b>3. Ideal lens is not perfect off axis.</b> Its optical-path term is correct only for an on-axis point. This blocks RMS wavefront, Strehl, PSF and MTF for any design with a paraxial objective, and telecentric layouts fail outright. <span class="chip bad">Open</span></li>
+    <li><b>4. Surface comments dropped on import.</b> Cosmetic; re-attached from the .ZMX for this page. <span class="chip warn">Worked around</span></li>
+  </ul>
+</section>
+
+<section id="reproduce" style="border-bottom:0">
+  <h2>Reproduce</h2>
+  <p>The scripts are in <code>evaluation_tools/</code>. optiland is installed with uv; the environment (pinned in <code>uv.lock</code>) lives outside Dropbox, here at <code>~/uv_venvs/optiland_eval_mac</code>, and is selected with <code>--project</code>.</p>
+<pre>export UV_PROJECT_ENVIRONMENT=~/uv_venvs/evaluation_mac
+uv run python -m evaluation_tools.analyze designs/SMOD4.5   # about 2 minutes
+uv run python -m evaluation_tools.build_summary                # regenerates all HTML</pre>
+  <p><code>load_system.py</code> holds the thin-lens patch and the unfolding step. <code>analyze.py</code> runs every analysis and <code>build_summary.py</code> writes this page.</p>
+</section>
+
+<footer>Generated 2026-11-25 with optiland 0.6.3. Zemax values come from the exported plots in <code>Zemax_reference_output/</code>.</footer>
+</main>
+</div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const box = document.getElementById("viewer");
+const hint = document.getElementById("viewer-hint");
+const fallback = document.getElementById("viewer-fallback");
+
+try {
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xdfe7ec);
+  const camera = new THREE.PerspectiveCamera(35, 16 / 9, 1, 20000);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x8899aa, 2.2));
+  const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+  sun.position.set(300, 500, 400);
+  scene.add(sun);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+
+  const resize = () => {
+    const w = box.clientWidth, h = box.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  };
+  new ResizeObserver(resize).observe(box);
+
+  let center = new THREE.Vector3(), radius = 300;
+  const views = {
+    iso: new THREE.Vector3(1, 0.55, -0.9),
+    side: new THREE.Vector3(1, 0, 0),
+    top: new THREE.Vector3(0, 1, 0.0001),
+  };
+  const setView = (k) => {
+    const d = views[k].clone().normalize().multiplyScalar(radius * 2.4);
+    camera.position.copy(center).add(d);
+    camera.up.set(k === "top" ? -1 : 0, k === "top" ? 0 : 1, 0);
+    controls.target.copy(center);
+    controls.update();
+  };
+  document.getElementById("view-iso").onclick = () => setView("iso");
+  document.getElementById("view-side").onclick = () => setView("side");
+  document.getElementById("view-top").onclick = () => setView("top");
+
+  const onModel = (gltf) => {
+    gltf.scene.traverse((o) => {
+      if (o.isMesh && o.material) {
+        o.material.side = THREE.DoubleSide;
+        if (o.material.transparent || o.material.opacity < 1) o.material.depthWrite = false;
+      }
+    });
+    scene.add(gltf.scene);
+    const bb = new THREE.Box3().setFromObject(gltf.scene);
+    bb.getCenter(center);
+    radius = bb.getSize(new THREE.Vector3()).length() / 2;
+    camera.near = radius / 100; camera.far = radius * 20; camera.updateProjectionMatrix();
+    box.appendChild(renderer.domElement);
+    resize();
+    setView("iso");
+    fallback.hidden = true;
+    hint.textContent = "Drag to rotate · scroll to zoom · right-drag to pan";
+    box.appendChild(hint);
+    renderer.setAnimationLoop(() => { controls.update(); renderer.render(scene, camera); });
+  };
+  const failed = () => { hint.textContent = "3D model could not load; showing the static render."; };
+  new GLTFLoader().load("../optiland_analysis/model.glb", onModel, undefined, failed);
+} catch (e) {
+  hint.textContent = "3D view not supported here; showing the static render.";
+}
+</script>
+<script>
+const D={"zdeg": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5, 6.0, 6.5, 7.0, 7.5, 8.0, 8.5, 9.0, 9.5, 10.0], "z_wfe": {"0.94": [0.02728013029315961, 0.02728013029315961, 0.02728013029315961, 0.02728013029315961, 0.02687296416938111, 0.02728013029315961, 0.028501628664495113, 0.03013029315960912, 0.03257328990228013, 0.03664495114006515, 0.041938110749185666, 0.04763843648208469, 0.05415309446254072, 0.06229641693811075, 0.07125407166123779, 0.08184039087947882, 0.09242671009771987, 0.10382736156351792, 0.11685667752442996, 0.13070032573289903, 0.1445439739413681], "0.85": [0.009364820846905538, 0.010586319218241042, 0.013029315960912053, 0.015879478827361564, 0.019951140065146578, 0.0248371335504886, 0.029723127035830618, 0.035830618892508145, 0.041938110749185666, 0.0492671009771987, 0.05741042345276873, 0.06636807817589577, 0.07532573289902281, 0.08591205211726384, 0.09649837133550489, 0.10871335504885994, 0.12133550488599348, 0.13477198697068404, 0.1498371335504886, 0.16530944625407165, 0.18118892508143322], "1.1": [0.07166123778501629, 0.07166123778501629, 0.07125407166123779, 0.07043973941368079, 0.06881107491856678, 0.06718241042345277, 0.06473941368078176, 0.06229641693811075, 0.05985342019543974, 0.056596091205211724, 0.05415309446254072, 0.05171009771986971, 0.0500814332247557, 0.0492671009771987, 0.0500814332247557, 0.05171009771986971, 0.05578175895765472, 0.061482084690553745, 0.06881107491856678, 0.07695439739413681, 0.08672638436482084]}, "z_strehl": {"0.94": [0.9756493506493507, 0.976461038961039, 0.976461038961039, 0.976461038961039, 0.976461038961039, 0.9756493506493507, 0.9732142857142857, 0.9699675324675324, 0.963474025974026, 0.9537337662337663, 0.9391233766233766, 0.9204545454545454, 0.8961038961038961, 0.8636363636363636, 0.823051948051948, 0.775974025974026, 0.7224025974025974, 0.6607142857142857, 0.5917207792207793, 0.5202922077922078, 0.4472402597402597], "0.85": [0.9991883116883117, 0.9991883116883117, 0.9967532467532467, 0.9935064935064936, 0.9878246753246753, 0.9805194805194806, 0.9699675324675324, 0.9553571428571429, 0.9375, 0.9131493506493507, 0.8831168831168831, 0.8482142857142857, 0.8076298701298701, 0.7548701298701299, 0.698051948051948, 0.6347402597402597, 0.5673701298701299, 0.49594155844155846, 0.42207792207792205, 0.34983766233766234, 0.28165584415584416], "1.1": [0.8214285714285714, 0.823051948051948, 0.825487012987013, 0.8303571428571429, 0.8368506493506493, 0.8449675324675324, 0.8547077922077922, 0.8660714285714286, 0.8758116883116883, 0.8871753246753247, 0.8969155844155844, 0.9058441558441559, 0.9131493506493507, 0.9147727272727273, 0.9131493506493507, 0.9050324675324676, 0.8920454545454546, 0.8693181818181818, 0.8376623376623377, 0.7978896103896104, 0.7508116883116883]}, "o_wdeg": [0.0, 0.25, 0.5, 0.7500000000000001, 1.0, 1.25, 1.5000000000000002, 1.7500000000000002, 2.0, 2.25, 2.5, 2.75, 3.0000000000000004, 3.25, 3.5000000000000004, 3.75, 4.0, 4.25, 4.5, 4.75, 5.0, 5.25, 5.5, 5.750000000000001, 6.000000000000001, 6.25, 6.5, 6.75, 7.000000000000001, 7.250000000000001, 7.5, 7.75, 8.0, 8.25, 8.5, 8.75, 9.0, 9.25, 9.5, 9.75, 10.0], "o_wfe": {"0.94": [0.08603377614886962, 0.939437024361868, 1.872988567547729, 2.807918760899113, 3.7432784901421323, 4.678905239706196, 5.6147694132684425, 6.550881077936874, 7.487267283984849, 8.423965275822514, 9.361020671748662, 10.298487657849748, 11.236430236704669, 12.174924186497552, 13.114059603550425, 14.053943989919206, 14.994705885969642, 15.936499064362447, 16.87950731089707, 17.823949819602486, 18.77008723101325, 19.71822834057115, 20.668737500851734, 21.62204273686016, 22.578644586418818, 23.539125671216564, 24.50416099082562, 25.47452892256618, 26.4511228900023, 27.434963651303462, 28.42721212780862, 29.42918267785985, 30.442356685958405, 31.468396309183458, 32.50915818833489, 33.56670689460558, 34.64332784814981, 35.741539403327174, 36.86410376519624, 38.014036372322714, 39.194613348579715], "0.85": [0.02598662674905705, 1.0379287840024167, 2.075409622430955, 3.1130797656765687, 4.150900127809427, 5.188898943785911, 6.227118515528096, 7.265608583392428, 8.304425714545749, 9.343634232839454, 10.383307827500944, 11.423531636351875, 12.46440476300424, 13.506043238266734, 14.548583453110544, 15.592186097511389, 16.637040642047655, 17.683370398167288, 18.7314381936747, 19.781552695268783, 20.834075409921535, 21.889428389200425, 22.94810265717525, 24.010667375122598, 25.077779745256986, 26.15019564740785, 27.228780986956473, 28.31452371734506, 29.40854648042357, 30.512119787863664, 31.626675639791475, 32.753821450281144, 33.89535411603297, 35.053274034299875, 36.229798838013146, 37.427376581359006, 38.64869807244832, 39.89670801673914, 41.174614608335176, 42.485897175770035, 43.834311485624056], "1.1": [0.22513998892316497, 0.8274308912432873, 1.608292979926912, 2.3993516612792454, 3.1931168880008807, 3.9880608118433156, 4.783688730867962, 5.57980388519493, 6.376321473233861, 7.173206611535785, 7.970449893686314, 8.768056851754475, 9.566043408203344, 10.36443429004215, 11.163263122206537, 11.962573620025776, 12.76242160773816, 13.562877733261033, 14.364030823827639, 15.165991862331914, 15.968898587228239, 16.7729207266683, 17.578265885371604, 18.38518610239419, 19.19398509796428, 20.00502622420015, 20.818741128164906, 21.635639129218003, 22.456317301935734, 23.281471242839334, 24.11190648350337, 24.948550494882898, 25.79246520218838, 26.644859908915386, 27.50710449291232, 28.380742709517406, 29.2675053980336, 30.16932335418082, 31.088339583943192, 32.02692062753394, 32.98766659643699]}, "o_sdeg": [0.0, 1.0, 2.0, 3.0000000000000004, 4.0, 5.0, 6.000000000000001, 7.000000000000001, 8.0, 9.0, 10.0], "o_strehl": {"0.94": [0.9420229469613894, 0.01614045251239278, 0.005996945763533017, 0.00399305316777987, 0.00308234129516532, 0.0019368087622995767, 0.0020159192650487236, 0.0018347024809001126, 0.001471053580700317, 0.0012583163326888177, 0.0010694545998926428], "0.85": [0.9740374740906566, 0.013786307225168416, 0.005229038204775136, 0.0040669974370708874, 0.0023445134495838392, 0.0019958748687434443, 0.0021456702077848415, 0.001496941098349831, 0.001322727861050702, 0.001118861327992069, 0.0015376460931406837], "1.1": [0.6454965009091915, 0.019905772928035866, 0.007590250103420109, 0.004440758517427162, 0.0036613230862707234, 0.0025787811119294276, 0.0018085279213626115, 0.00200268794122095, 0.002325364261737946, 0.0015434049810725983, 0.0014169099725738683]}};
+const COL={"0.85":"var(--w85)","0.94":"var(--w94)","1.1":"var(--w110)"};
+const NAME={"0.85":"0.85 µm","0.94":"0.94 µm","1.1":"1.10 µm"};
+function chart(svgId,legId,o){
+  const W=760,H=360,m={l:62,r:20,t:14,b:46},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const X=v=>m.l+v/10*iw;
+  const Y=o.log?(v=>m.t+ih-(Math.log10(Math.max(v,o.min))-Math.log10(o.min))/(Math.log10(o.max)-Math.log10(o.min))*ih)
+              :(v=>m.t+ih-(v-o.min)/(o.max-o.min)*ih);
+  let s="";
+  o.ticks.forEach(t=>{s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(t)}" y2="${Y(t)}" stroke="var(--rule)"/><text class="tick" x="${m.l-8}" y="${Y(t)+4}" text-anchor="end">${t}</text>`});
+  for(let d=0;d<=10;d+=2)s+=`<text class="tick" x="${X(d)}" y="${H-m.b+18}" text-anchor="middle">${d}</text>`;
+  s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${m.t+ih}" y2="${m.t+ih}" stroke="var(--muted)"/>`;
+  s+=`<text class="axl" x="${m.l+iw/2}" y="${H-6}" text-anchor="middle">Field angle (deg)</text>`;
+  s+=`<text class="axl" transform="translate(14 ${m.t+ih/2}) rotate(-90)" text-anchor="middle">${o.ylabel}</text>`;
+  if(o.ref!=null)s+=`<line x1="${m.l}" x2="${W-m.r}" y1="${Y(o.ref)}" y2="${Y(o.ref)}" stroke="var(--muted)" stroke-dasharray="2 4"/><text class="tick" x="${W-m.r-4}" y="${Y(o.ref)-5}" text-anchor="end">${o.reflabel}</text>`;
+  ["0.85","0.94","1.1"].forEach(w=>{
+    const zp=o.z[w].map((v,i)=>[D.zdeg[i],v]).filter(p=>p[1]!=null);
+    s+=`<polyline fill="none" stroke="${COL[w]}" stroke-width="2.4" stroke-linejoin="round" points="${zp.map(p=>X(p[0])+","+Y(p[1])).join(" ")}"/>`;
+    const op=o.o[w].map((v,i)=>[o.odeg[i],v]);
+    if(o.oline)s+=`<polyline fill="none" stroke="${COL[w]}" stroke-width="2" stroke-dasharray="6 4" points="${op.map(p=>X(p[0])+","+Y(p[1])).join(" ")}"/>`;
+    else s+=op.map(p=>`<circle cx="${X(p[0])}" cy="${Y(p[1])}" r="4.5" fill="var(--surface)" stroke="${COL[w]}" stroke-width="2"><title>optiland ${NAME[w]} ${p[0]}°: ${p[1].toFixed(3)}</title></circle>`).join("");
+  });
+  document.getElementById(svgId).innerHTML=s;
+  document.getElementById(legId).innerHTML=["0.85","0.94","1.1"].map(w=>`<span><i style="border-color:${COL[w]}"></i>${NAME[w]}</span>`).join("")+
+    `<span>Solid line: Zemax</span><span>${o.oline?"Dashed line":"Open circles"}: optiland</span>`;
+}
+chart("c1","leg1",{min:0,max:1,ticks:[0,0.2,0.4,0.6,0.8,1],ylabel:"Strehl ratio",ref:0.8,reflabel:"0.8 diffraction limit",z:D.z_strehl,o:D.o_strehl,odeg:D.o_sdeg});
+chart("c2","leg2",{log:true,min:0.005,max:100,ticks:[0.01,0.1,1,10,100],ylabel:"RMS wavefront (waves, log)",ref:0.0716,reflabel:"0.0716 (Strehl 0.8)",z:D.z_wfe,o:D.o_wfe,odeg:D.o_wdeg,oline:true});
+</script>
+</body>
+</html>
