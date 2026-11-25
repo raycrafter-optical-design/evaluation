@@ -322,7 +322,7 @@
     <li><b>1. Ideal lens reverses rays after a mirror.</b> optiland's thin-lens model forces rays to travel in +z. After the fold mirror they travel in −z, so they were sent backwards: 10° landed at 2.7 mm instead of 0.47 mm. <span class="chip warn">Patched locally</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/pull/1109">PR #1109</a> (fixed on main for real rays), <a href="https://github.com/optiland/optiland/issues/1210">#1210</a> (paraxial path).</span></li>
     <li><b>2. Paraxial engine is wrong with a fold mirror.</b> The exit pupil and the reference image height are wrong in the folded file, which breaks distortion and grid distortion. <span class="chip warn">Worked around by unfolding</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1210">#1210</a>.</span></li>
     <li><b>3. Ideal lens is not perfect off axis.</b> Its optical-path term is correct only for an on-axis point. This blocks RMS wavefront, Strehl, PSF and MTF for any design with a paraxial objective, and telecentric layouts fail outright. <span class="chip bad">Open</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1248">#1248</a>.</span></li>
-    <li><b>4. Surface comments dropped on import.</b> Cosmetic; re-attached from the .ZMX for this page. <span class="chip warn">Worked around</span> <span class="src">Upstream: not yet filed.</span></li>
+    <li><b>4. Surface comments dropped on import.</b> Cosmetic; re-attached from the .ZMX for this page. <span class="chip warn">Worked around</span> <span class="src">Upstream: <a href="https://github.com/optiland/optiland/issues/1249">#1249</a> (filed as a feature request).</span></li>
   </ul>
 </section>
 

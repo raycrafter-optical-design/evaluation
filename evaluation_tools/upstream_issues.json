@@ -1,14 +1,72 @@
 {
  "description": "Where each local issue (numbers in optiland_issues_found.md) stands upstream in optiland/optiland. Edit here; the pages and build_summary.py read it.",
  "links": {
-  "1": [["PR #1109", "https://github.com/optiland/optiland/pull/1109", "fixed on main for real rays"], ["#1210", "https://github.com/optiland/optiland/issues/1210", "paraxial path"]],
-  "2": [["#1210", "https://github.com/optiland/optiland/issues/1210", ""]],
-  "3": [["#1248", "https://github.com/optiland/optiland/issues/1248", ""]],
-  "4": [],
-  "5": [["#1247", "https://github.com/optiland/optiland/issues/1247", ""]],
-  "6": [["#1247", "https://github.com/optiland/optiland/issues/1247", ""]],
-  "7": [["#1247", "https://github.com/optiland/optiland/issues/1247", ""]],
-  "8": [["#865", "https://github.com/optiland/optiland/issues/865", "roadmap, with our comment"], ["#1210", "https://github.com/optiland/optiland/issues/1210", ""]],
+  "1": [
+   [
+    "PR #1109",
+    "https://github.com/optiland/optiland/pull/1109",
+    "fixed on main for real rays"
+   ],
+   [
+    "#1210",
+    "https://github.com/optiland/optiland/issues/1210",
+    "paraxial path"
+   ]
+  ],
+  "2": [
+   [
+    "#1210",
+    "https://github.com/optiland/optiland/issues/1210",
+    ""
+   ]
+  ],
+  "3": [
+   [
+    "#1248",
+    "https://github.com/optiland/optiland/issues/1248",
+    ""
+   ]
+  ],
+  "4": [
+   [
+    "#1249",
+    "https://github.com/optiland/optiland/issues/1249",
+    "filed as a feature request"
+   ]
+  ],
+  "5": [
+   [
+    "#1247",
+    "https://github.com/optiland/optiland/issues/1247",
+    ""
+   ]
+  ],
+  "6": [
+   [
+    "#1247",
+    "https://github.com/optiland/optiland/issues/1247",
+    ""
+   ]
+  ],
+  "7": [
+   [
+    "#1247",
+    "https://github.com/optiland/optiland/issues/1247",
+    ""
+   ]
+  ],
+  "8": [
+   [
+    "#865",
+    "https://github.com/optiland/optiland/issues/865",
+    "roadmap, with our comment"
+   ],
+   [
+    "#1210",
+    "https://github.com/optiland/optiland/issues/1210",
+    ""
+   ]
+  ],
   "9": [],
   "10": []
  }

@@ -188,7 +188,7 @@ RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 
 ## 4. Zemax surface comments (`COMM`) are dropped on import — CONFIRMED (minor)
 
-**Upstream:** not yet filed.
+**Upstream:** [#1249](https://github.com/optiland/optiland/issues/1249) (filed as a feature request).
 
 **Symptom:** `op.info()` shows an empty *Comment* column. The file has comments on several surfaces: `X-galvo`, `AC508-075-B`, `LE1015-B`, `PBS255`, `ACT508-500-B`, `enterance to flip cube`, `underside of filp cube`, `Back aperture`.
 
