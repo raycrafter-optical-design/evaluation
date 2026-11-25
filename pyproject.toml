@@ -51,4 +51,4 @@ max-line-length = 120
 [tool.codespell]
 skip = '.git,*.json,*.zmx,*.ZMX,*.zda,*.ZDA'
 check-hidden = true
-ignore-words-list = 'parm'
+ignore-words-list = 'parm,enterance,filp'

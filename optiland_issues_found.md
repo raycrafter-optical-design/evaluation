@@ -34,21 +34,23 @@
 
 ```python
 from optiland.fileio import load_zemax_file
-op = load_zemax_file("20260930 SMOD4.5_54SL_250TL.ZMX")   # UTF-16 loads fine
+
+op = load_zemax_file("20260930 SMOD4.5_54SL_250TL.ZMX")  # UTF-16 loads fine
 op.trace_generic(0, 1.0, 0, 0, 0.85)
 s19, s20 = op.surfaces[19], op.surfaces[20]
-print(float(s19.M[0]), float(s20.M[0]))      # stock: direction after lens points back
-print(492.68 - float(s20.z[0]))              # stock: ~2.71 mm; expected ~0.47 mm
+print(float(s19.M[0]), float(s20.M[0]))  # stock: direction after lens points back
+print(492.68 - float(s20.z[0]))  # stock: ~2.71 mm; expected ~0.47 mm
 ```
 
 **Cause:** for the refractive case the code does
 
 ```python
-f  = self.f * be.copysign(be.ones_like(rays.N), rays.N)   # f flips sign when N<0
-f1 = f * n1; f2 = f * n2
+f = self.f * be.copysign(be.ones_like(rays.N), rays.N)  # f flips sign when N<0
+f1 = f * n1
+f2 = f * n2
 L = L * f1 - rays.x
 M = M * f1 - rays.y
-N = be.where(rays.N > 0, f2, -f2)                         # for N<0: -f2 = -(-f*n2) = +f*n2  -> N>0
+N = be.where(rays.N > 0, f2, -f2)  # for N<0: -f2 = -(-f*n2) = +f*n2  -> N>0
 ```
 
 When N < 0, `f` becomes −f, so `f2` is negative. Then `N = -f2` is positive, and the ray is sent back. The sign of `f` also flips for the transverse terms, so the lens acts as diverging toward the "focus". Both sign flips are wrong. The ray should head toward the point `(f·L/|N|, f·M/|N|)` in the back focal plane on the side it is travelling to, and keep the sign of N.
@@ -106,7 +108,8 @@ These are consistent with Zemax (0.475 mm semi-diameter) and with the unfolded m
 **Repro:**
 
 ```python
-from load_system import load          # in pilot/evaluation
+from load_system import load  # in pilot/evaluation
+
 for unf in (False, True):
     op = load(unfolded=unf)
     print(unf, op.paraxial.XPL(), op.paraxial.XPD(), op.paraxial.chief_ray()[0][-1])
@@ -138,6 +141,7 @@ from optiland import optic
 from optiland.analysis import RmsWavefrontErrorVsField
 from optiland.psf import FFTPSF
 
+
 def build(stop_gap):
     op = optic.Optic()
     op.surfaces.add(index=0, thickness=np.inf)
@@ -145,17 +149,20 @@ def build(stop_gap):
     op.surfaces.add(index=2, surface_type="paraxial", f=12.5, thickness=12.5)
     op.surfaces.add(index=3)
     op.set_aperture(aperture_type="EPD", value=4.0)
-    op.fields.set_type("angle"); op.fields.add(y=0); op.fields.add(y=5)
+    op.fields.set_type("angle")
+    op.fields.add(y=0)
+    op.fields.add(y=5)
     op.wavelengths.add(0.85, is_primary=True)
     return op
 
-op = build(1e-6)   # stop at the lens
+
+op = build(1e-6)  # stop at the lens
 print(RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)._wavefront_error)
 # -> [0, 0.526, 1.291] waves   (ideal lens: expected ~0 at all fields)
 print(FFTPSF(op, field=(0, 1), wavelength=0.85, num_rays=128, grid_size=256).strehl_ratio())
 # -> 0.159                      (expected ~1.0)
 
-op = build(12.5)   # stop at front focal plane = image-space telecentric (like the real system)
+op = build(12.5)  # stop at front focal plane = image-space telecentric (like the real system)
 RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 # -> ValueError: No valid ray samples found for chief-ray wavefront.  (optiland/wavefront/strategy.py:252)
 ```
@@ -185,7 +192,7 @@ RmsWavefrontErrorVsField(op, num_fields=3, num_rays=32)
 
 ## Smaller observations / things that were *not* bugs
 
-- **UTF-16 `.ZMX` files load fine.** I transcoded to UTF-8 pre-emptively, but `load_zemax_file` reads the original UTF-16 file directly (21 surfaces). The transcode step in `load_system.py` can be removed.
+- **UTF-16 `.ZMX` files load fine.** I transcoded to UTF-8 preemptively, but `load_zemax_file` reads the original UTF-16 file directly (21 surfaces). The transcode step in `load_system.py` can be removed.
 - `op.info()` lists the paraxial surface as **"Planar"**. The surface is actually a `ThinLensInteractionModel` with f = 12.5, so this is only a display issue. It would be clearer as "Paraxial (f=12.5)".
 - `surface.semi_aperture` is `None` for surfaces with no physical aperture, but `op.info()` prints a computed semi-aperture. There's no obvious public accessor for the computed (floating) semi-diameter.
 - `COORDBRK` surfaces are absorbed into neighbouring surfaces' coordinate systems, so optiland surface indices differ from Zemax indices after each coordinate break. That's not a bug, but it isn't documented on import and it's easy to get wrong.

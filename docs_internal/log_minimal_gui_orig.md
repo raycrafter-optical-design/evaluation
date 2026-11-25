@@ -172,4 +172,3 @@ end of each section. Where a number is given it was measured offscreen, not on a
   enable/disable logic, the red selection colour, the hover rectangle brush, the `InfiniteLine`
   label, and one unused variable in the swap code. Imports tidied and `json` moved to the top of
   `report.py`. A scan for unused imports, constants, functions and locals found nothing else.
-
